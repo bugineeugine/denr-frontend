@@ -1,0 +1,51 @@
+import { createPermitSchema, permitSchema, updatePermitSchema } from "@/schema/permitSchema";
+import * as z from "zod";
+import { DataResponseType } from ".";
+export type PermitListsType = {
+  message: string;
+  data: PermitDataType[];
+};
+
+export type RequestCreateType = z.infer<typeof createPermitSchema>;
+export type RequestUpdateType = z.infer<typeof updatePermitSchema>;
+export type PermitSchemaType = z.infer<typeof permitSchema>;
+export type ResponseCreatePermitType = DataResponseType<"data">;
+export type ResponseUpdatePermitType = DataResponseType<"data">;
+export type PermitDataType = {
+  id: string;
+  permit_type: string;
+  permit_no: string;
+  land_owner: string;
+  contact_no: string;
+  location: string;
+  area: string;
+  species: string;
+  total_volume: string;
+  plate_no: string;
+  destination: string;
+  expiry_date: string;
+  grand_total: string;
+  remaning_balance: string;
+  issued_date: string;
+  lng: number;
+  lat: number;
+  status: string;
+  qrcode: string;
+  created_at: Date;
+  updated_at: Date;
+  noTruckloads: number;
+  verificationFee: number;
+  oathFee: number;
+  inspectionFee: number;
+  totalAmountDue: number;
+  requestLetter: string;
+  certificateBarangay: string;
+  orCr: string;
+  driverLicense: string;
+  otherDocuments: string;
+  creator: {
+    id: string;
+    name: string;
+    email: string;
+  };
+};
