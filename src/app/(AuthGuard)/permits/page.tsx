@@ -37,6 +37,7 @@ const PermitsPage = () => {
       {
         accessorKey: "qrcode",
         header: "QR Code",
+        enableColumnFilter: false,
         Cell: ({ row }) => {
           const fileName = row.original.qrcode;
           return (
@@ -54,15 +55,19 @@ const PermitsPage = () => {
       {
         accessorKey: "permit_no",
         header: "Permit No.",
+        enableColumnFilter: false,
       },
       {
         accessorKey: "permit_type",
         header: "Permit Type",
+        filterVariant: "select",
+        filterSelectOptions: ["Transport", "Business", "Construction", "Event"],
       },
 
       {
         accessorKey: "expiry_date",
         header: "Valid Until",
+        enableColumnFilter: false,
         Cell: ({ row }) => {
           const expiryDate = row.original.expiry_date;
           const issuedDate = row.original.issued_date;
@@ -76,6 +81,7 @@ const PermitsPage = () => {
       {
         accessorKey: "creator.id",
         header: "Created By",
+        enableColumnFilter: false,
         Cell: ({ row }) => {
           const [first, last] = row.original.creator.name.split(" ");
           const email = row.original.creator.email;
@@ -90,6 +96,9 @@ const PermitsPage = () => {
       {
         accessorKey: "status",
         header: "Status",
+        filterVariant: "select",
+        filterSelectOptions: ["Active", "Expired", "Used", "Cancelled"],
+
         Cell: ({ row }) => {
           const status = row.original.status;
           return (
@@ -146,7 +155,7 @@ const PermitsPage = () => {
     enableRowActions: false,
     enableColumnResizing: false,
     layoutMode: "grid",
-    enableColumnFilters: false,
+    enableColumnFilters: true,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enableFilterMatchHighlighting: false,
@@ -154,6 +163,7 @@ const PermitsPage = () => {
       density: "compact",
       isLoading,
       showGlobalFilter: true,
+      showColumnFilters: true,
     },
 
     muiTablePaperProps: () => {

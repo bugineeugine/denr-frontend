@@ -5,22 +5,11 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
-import { blue, blueGrey, deepOrange, green, indigo, lightBlue, lime, pink, teal, yellow } from "@mui/material/colors";
+import { teal } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
 import { alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ComposedChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { TooltipContentProps } from "recharts/types/component/Tooltip";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -54,15 +43,16 @@ const CustomTooltipPaper = ({ active, payload, label }: Partial<TooltipContentPr
 };
 
 const AnnualyPermit = ({ permitByYear }: { permitByYear: DashboardDatatype["permitsByYear"] }) => {
-  // Convert string values to numbers
-  const data = permitByYear.map((item) => ({
-    year: item.year,
-    total: item.total,
-    Transport: Number(item.Transport),
-    Event: Number(item.Event),
-    Business: Number(item.Business),
-    Construction: Number(item.Construction),
-  }));
+  const data = permitByYear
+    .filter((item) => item.year)
+    .map((item) => ({
+      year: item.year,
+      total: item.total,
+      Transport: Number(item.Transport),
+      Event: Number(item.Event),
+      Business: Number(item.Business),
+      Construction: Number(item.Construction),
+    }));
 
   return (
     <Card variant="outlined" className="h-full">

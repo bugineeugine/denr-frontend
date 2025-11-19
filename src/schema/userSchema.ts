@@ -15,8 +15,41 @@ export const userSchema = z.object({
   role: z.string().nonempty({ error: "Role is required" }),
   password: passwordSchema,
 });
-
+const pass = z
+  .string()
+  .optional()
+  .superRefine((val, ctx) => {
+    if (val !== undefined && val !== "") {
+      if (val.length < 8) {
+        ctx.addIssue({
+          code: "custom",
+          minimum: 8,
+          type: "string",
+          inclusive: true,
+          message: "Password must contain at least 8 characters",
+        });
+      }
+      if (val.length > 55) {
+        ctx.addIssue({
+          code: "custom",
+          maximum: 55,
+          type: "string",
+          inclusive: true,
+          message: "Password must be under 55 characters",
+        });
+      }
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#/])/.test(val)) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Password must contain at least one uppercase, lowercase, number, and special character",
+        });
+      }
+    }
+  });
 export const createUserSchema = userSchema;
+export const updateSettingsSchema = userSchema.omit({ password: true, role: true }).extend({
+  password: pass,
+});
 export const updateUserSchema = userSchema.omit({ password: true }).extend({
   password: z
     .string()

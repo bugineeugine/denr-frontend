@@ -98,8 +98,8 @@ const LoginForm = () => {
   const { replace } = useRouter();
   const { control, handleSubmit } = useForm({
     defaultValues: {
-      email: "admin@example.com",
-      password: "admin123",
+      email: "admin123@example.com",
+      password: "P@$sw0rd",
     },
     resolver: zodResolver(schema),
   });

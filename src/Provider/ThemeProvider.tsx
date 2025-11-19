@@ -8,7 +8,7 @@ import { ReactNode } from "react";
 const ThemeProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-      <ProviderTheme theme={theme} defaultMode="dark" storageWindow={window}>
+      <ProviderTheme theme={theme} defaultMode="light" storageWindow={window}>
         <CssBaseline />
         {children}
       </ProviderTheme>

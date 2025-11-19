@@ -9,6 +9,7 @@ export type DashboardDatatype = {
   permitsByStatus: PermitsByStatusType[];
   latestPermits: PermitDataType[];
   permitByUserId: PermitDataType[];
+  allPermit: PermitDataType[];
 };
 
 export type PermitsByYearType = {

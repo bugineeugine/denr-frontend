@@ -1,4 +1,5 @@
 import AnnualyPermit from "@/components/dashboard/AnnualyPermit";
+import PermitMap from "@/components/dashboard/PermitMap";
 import PermitStatus from "@/components/dashboard/PermitStatus";
 import { DashboardDatatype } from "@/types/dashboard";
 import axiosInstance from "@/utils/axiosInstance";
@@ -23,12 +24,12 @@ const DashboardPage = async () => {
     },
   });
   const permits = response.data.data as DashboardDatatype;
-
+  console.dir(permits, { depth: null });
   return (
     <Box className="p-2 space-y-2">
       <Typography variant="h6">Dashboard & Analytics</Typography>
       <Grid container spacing={1}>
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 6, xl: 3 }}>
           <Card variant="outlined">
             <CardContent className="p-4">
               <Box className="flex items-center justify-between">
@@ -44,7 +45,7 @@ const DashboardPage = async () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 6, xl: 3 }}>
           <Card variant="outlined">
             <CardContent className="p-4">
               <Box className="flex items-center justify-between">
@@ -60,7 +61,7 @@ const DashboardPage = async () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 6, xl: 3 }}>
           <Card variant="outlined">
             <CardContent className="p-4">
               <Box className="flex items-center justify-between">
@@ -76,7 +77,7 @@ const DashboardPage = async () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 6, xl: 3 }}>
           <Card variant="outlined">
             <CardContent className="p-4">
               <Box className="flex items-center justify-between">
@@ -131,6 +132,9 @@ const DashboardPage = async () => {
         </Grid>
         <Grid size={{ xs: 12, md: 5 }}>
           <PermitStatus permitsByStatus={permits.permitsByStatus} />
+        </Grid>
+        <Grid size={12}>
+          <PermitMap permits={permits.allPermit} />
         </Grid>
       </Grid>
     </Box>

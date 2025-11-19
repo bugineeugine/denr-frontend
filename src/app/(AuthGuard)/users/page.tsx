@@ -18,7 +18,9 @@ import { UserDataType, UserListsType } from "@/types/user";
 import CreateUser from "@/components/user/CreateUser";
 import EditUser from "@/components/user/EditUser";
 import DeleteUser from "@/components/user/DeleteUser";
+import useAuth from "@/store/useAuth";
 const UsersPage = () => {
+  const useData = useAuth((state) => state.userData);
   const { data, isLoading } = useQuery<UserListsType>({
     queryKey: ["user-lists"],
     queryFn: async () => {
@@ -54,14 +56,14 @@ const UsersPage = () => {
 
           return (
             <Box className="space-x-1">
-              <EditUser user={user} />
-              <DeleteUser user={user} />
+              {useData?.id !== user.id && <EditUser user={user} />}
+              {useData?.id !== user.id && <DeleteUser user={user} />}
             </Box>
           );
         },
       },
     ],
-    []
+    [useData]
   );
   const table = useMaterialReactTable({
     columns,
