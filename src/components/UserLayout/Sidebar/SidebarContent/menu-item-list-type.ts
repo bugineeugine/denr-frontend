@@ -1,15 +1,12 @@
-import { ComponentType } from 'react';
-import { SvgIconProps } from '@mui/material/SvgIcon';
-import { PermissionMap } from '@/components/HasPermissionsClient';
-
-type Permission = PermissionMap[keyof PermissionMap];
+import { ComponentType } from "react";
+import { SvgIconProps } from "@mui/material/SvgIcon";
 
 interface BaseMenuItem {
   label?: string;
   href?: string;
   icon?: ComponentType<SvgIconProps>;
   segment: string;
-  action?: Permission[];
+  action?: string[];
 }
 
 export type MenuItemType = BaseMenuItem;
@@ -20,18 +17,18 @@ export type MenuItemGroupType = {
   icon?: ComponentType<SvgIconProps>;
   segment: string;
   children?: (MenuItemGroupType | BaseMenuItem)[];
-  action?: Permission[];
+  action?: string[];
 };
 
 export type MenuItemKind =
   | {
-      kind: 'header';
+      kind: "header";
       title: string;
-      action?: Permission[];
+      action?: string[];
     }
   | {
-      kind: 'divider';
-      action?: Permission[];
+      kind: "divider";
+      action?: string[];
     };
 
 export type MenuItemListType = (MenuItemType | MenuItemGroupType | MenuItemKind)[];
