@@ -116,7 +116,7 @@ const LoginForm = () => {
     onSuccess: (data) => {
       const role = data.user.role;
 
-      if (role === "admin" || role === "validator") {
+      if (role === "admin" || role === "validator" || role == "officer") {
         replace("/dashboard");
         return;
       }

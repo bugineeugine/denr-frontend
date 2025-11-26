@@ -13,6 +13,7 @@ export interface UserDataType {
   role: string;
   created_at: Date;
   updated_at: Date;
+  position: string | null;
 }
 
 export type RequestCreateUserType = z.infer<typeof createUserSchema>;

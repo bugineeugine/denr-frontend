@@ -51,6 +51,88 @@ const ValidPassword = () => {
   );
 };
 
+const PositionForm = () => {
+  const { control } = useFormContext<UserSchemaType>();
+
+  const watchRole = useWatch({
+    control,
+    name: "role",
+  });
+
+  if (watchRole === "officer") {
+    return (
+      <FormControl fullWidth>
+        <FormLabel>Position</FormLabel>
+        <Controller
+          control={control}
+          name="position"
+          render={({ field: { value, onChange }, fieldState }) => {
+            return (
+              <>
+                <Select
+                  value={value || ""}
+                  onChange={onChange}
+                  error={!!fieldState.error}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        "& .MuiMenuItem-root": {
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "flex-start",
+                          gap: "2px",
+                          lineHeight: 1.2,
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem value=""></MenuItem>
+                  <MenuItem value="Clerk">
+                    <Typography>Clerk</Typography>
+                    <Typography variant="caption">
+                      Receiving/Releasing Clerk CENRO/Implementing PENRO Records Unit
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem value="Deputy CENR">
+                    <Typography>Deputy CENR</Typography>
+                    <Typography variant="caption">PENR/CENR Officer/ Deputy CENR Officer</Typography>
+                  </MenuItem>
+                  <MenuItem value="Chief">
+                    <Typography>Chief</Typography>
+                    <Typography variant="caption">Chief RPS (CENRO)/Chief TSD (Implementing PENRO)</Typography>
+                  </MenuItem>
+                  <MenuItem value="Accountant">
+                    <Typography>Accountant</Typography>
+                    <Typography variant="caption">CENR Officer/Accountant for implementing PENRO</Typography>
+                  </MenuItem>
+                  <MenuItem value="Cashier">
+                    <Typography>Cashier</Typography>
+                    <Typography variant="caption">Bill Collector/ Cashier for implementing PENRO</Typography>
+                  </MenuItem>
+                  <MenuItem value="Inspector">
+                    <Typography>Inspector</Typography>
+                    <Typography variant="caption">Inspection Officer CENRO/Implementing PENRO</Typography>
+                  </MenuItem>
+                  <MenuItem value="CENR PENR">
+                    <Typography>CENR PENR</Typography>
+                    <Typography variant="caption">CENR/PENR Officer</Typography>
+                  </MenuItem>
+                </Select>
+                {!!fieldState.error && (
+                  <FormHelperText className="text-error">{fieldState.error.message}</FormHelperText>
+                )}
+              </>
+            );
+          }}
+        />
+      </FormControl>
+    );
+  }
+
+  return null;
+};
+
 const UserForm = () => {
   const { control } = useFormContext<UserSchemaType>();
   const [showPassword, setShowPassword] = useState(false);
@@ -104,6 +186,7 @@ const UserForm = () => {
                   <MenuItem value=""></MenuItem>
                   <MenuItem value="admin">Admin</MenuItem>
                   <MenuItem value="validator">Validator</MenuItem>
+                  <MenuItem value="officer">Officer</MenuItem>
                 </Select>
                 {!!fieldState.error && (
                   <FormHelperText className="text-error">{fieldState.error.message}</FormHelperText>
@@ -113,6 +196,7 @@ const UserForm = () => {
           }}
         />
       </FormControl>
+      <PositionForm />
       <FormControl fullWidth>
         <FormLabel>Password</FormLabel>
         <Controller

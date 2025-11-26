@@ -14,8 +14,11 @@ export const adminRoutes: Record<string, string[]> = {
   "/home": ["canViewHome"],
   "/application-form": ["canApplicationForm"],
   "/permit/:permitId": ["viewPermit"],
+  "/citizen-charter": ["canCitizenCharter"],
+  "/citizen": ["canViewCitizen"],
+  "/approval/for-approval": ["canViewForApproval"],
+  "/approval/history-approve": ["canViewHistoryApprove"],
 };
-export const residentRoutes: string[] = ["/home", "/profile", "/account", "/my-requests", "/my-requests/create"];
 
 export const hasPermissionMiddleware = (userPermissions: string[], requiredPermissions: string[]): boolean => {
   return requiredPermissions.some((permission) => userPermissions.includes(permission));

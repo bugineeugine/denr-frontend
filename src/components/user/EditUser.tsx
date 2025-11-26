@@ -28,6 +28,7 @@ type Props = {
 
 const DialogContentForm = (props: Props) => {
   const { onClose, user } = props;
+  console.log({ user });
   const queryClient = useQueryClient();
   const methods = useForm({
     defaultValues: {
@@ -35,6 +36,7 @@ const DialogContentForm = (props: Props) => {
       email: user.email,
       role: user.role,
       password: "",
+      position: user.position,
     },
     resolver: zodResolver(updateUserSchema),
     mode: "all",

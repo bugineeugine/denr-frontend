@@ -64,6 +64,14 @@ const ApplicantLayout = ({ children }: { children: ReactNode }) => {
               >
                 Apply for Certificate of Verification
               </Link>
+              <Link
+                className="cursor-pointer"
+                onClick={() => push("/citizen-charter")}
+                variant="subtitle2"
+                underline="hover"
+              >
+                Citenzen’s Charter
+              </Link>
             </Box>
           </Toolbar>
         </AppBar>

@@ -31,6 +31,7 @@ const DialogContentForm = (props: UseDisclosureType) => {
       email: "",
       role: "",
       password: "",
+      position: null,
     },
     resolver: zodResolver(createUserSchema),
     mode: "all",
