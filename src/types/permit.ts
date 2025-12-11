@@ -43,6 +43,9 @@ export type PermitDataType = {
   orCr: string;
   driverLicense: string;
   otherDocuments: string;
+  steps: number;
+  status_step: string;
+
   creator: {
     id: string;
     name: string;

@@ -33,7 +33,6 @@ const DialogContentForm = (props: UseDisclosureType) => {
   const queryClient = useQueryClient();
   const methods = useForm({
     defaultValues: {
-      permit_type: "",
       land_owner: "",
       contact_no: "",
       location: "",
@@ -42,13 +41,8 @@ const DialogContentForm = (props: UseDisclosureType) => {
       total_volume: "",
       plate_no: "",
       destination: "",
-      noTruckloads: 0,
-      grand_total: "",
-      remaning_balance: "",
-      verificationFee: 50.0,
-      oathFee: 36.0,
-      inspectionFee: 360.0,
-      totalAmountDue: 0,
+      grand_total: "0",
+      remaning_balance: "0",
       lng: 121.157227,
       lat: 16.629613,
       requestLetter: undefined,
@@ -130,7 +124,7 @@ const CreatePermit = () => {
   return (
     <>
       <Button onClick={disclosure.onOpen} variant="contained" startIcon={<AddOutlinedIcon />}>
-        Create Permit
+        Application
       </Button>
       <Dialog
         open={disclosure.isOpen}

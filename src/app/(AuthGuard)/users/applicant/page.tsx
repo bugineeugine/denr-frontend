@@ -13,49 +13,61 @@ import {
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
+import { UserDataType, UserListsType } from "@/types/user";
 
-import { dateFromNow } from "@/utils/dateFormat";
-import { PermitDataType, PermitListsType } from "@/types/permit";
-
-const HistoryApprovePage = () => {
-  const { data, isLoading } = useQuery<PermitListsType>({
-    queryKey: ["history-approved"],
+import CreateUser from "@/components/user/CreateUser";
+import EditUser from "@/components/user/EditUser";
+import DeleteUser from "@/components/user/DeleteUser";
+import useAuth from "@/store/useAuth";
+const UsersApplicantPage = () => {
+  const useData = useAuth((state) => state.userData);
+  const { data, isLoading } = useQuery<UserListsType>({
+    queryKey: ["user-lists"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/citizen-charter/history-approved");
+      const response = await axiosInstance.get("/users");
       return response.data;
     },
     retry: false,
   });
 
-  const columns = useMemo<MRT_ColumnDef<PermitDataType>[]>(
+  const columns = useMemo<MRT_ColumnDef<UserDataType>[]>(
     () => [
       {
-        accessorKey: "permit_no",
-        header: "App No #.",
-        enableColumnFilter: false,
+        accessorKey: "name",
+        header: "Name",
       },
-
       {
-        accessorKey: "status",
-        header: "Status",
-        enableColumnFilter: false,
+        accessorKey: "email",
+        header: "Email",
       },
-
       {
-        accessorKey: "created_at",
-        header: "Approve At",
-        enableColumnFilter: false,
+        accessorKey: "role",
+        header: "Role",
+        muiTableBodyCellProps: {
+          className: "capitalize",
+        },
+      },
+      {
+        id: "action",
+        header: "Action",
+        size: 100,
         Cell: ({ row }) => {
-          const created_at = row.original.created_at;
-          return <Typography>{dateFromNow(created_at as unknown as string)}</Typography>;
+          const user = row.original;
+
+          return (
+            <Box className="space-x-1">
+              {useData?.id !== user.id && <EditUser user={user} />}
+              {useData?.id !== user.id && <DeleteUser user={user} />}
+            </Box>
+          );
         },
       },
     ],
-    []
+    [useData]
   );
   const table = useMaterialReactTable({
     columns,
-    data: data?.data || [],
+    data: data?.data.filter((element) => element.role === "applicant") || [],
     enableFilters: true,
     enablePagination: true,
     enableBottomToolbar: true,
@@ -69,7 +81,7 @@ const HistoryApprovePage = () => {
     enableRowActions: false,
     enableColumnResizing: false,
     layoutMode: "grid",
-    enableColumnFilters: true,
+    enableColumnFilters: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enableFilterMatchHighlighting: false,
@@ -77,7 +89,6 @@ const HistoryApprovePage = () => {
       density: "compact",
       isLoading,
       showGlobalFilter: true,
-      showColumnFilters: true,
     },
 
     muiTablePaperProps: () => {
@@ -110,6 +121,7 @@ const HistoryApprovePage = () => {
           }}
         >
           <Box sx={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+            <CreateUser />
             <MRT_GlobalFilterTextField table={table} />
           </Box>
         </Box>
@@ -120,12 +132,15 @@ const HistoryApprovePage = () => {
   return (
     <Box className="m-2 space-y-2">
       <Box>
-        <Typography variant="h6">My Historical Appvove</Typography>
-        <Typography variant="body2">Citizen Charter Histry Approval Action By Me.</Typography>
+        <Typography variant="h6">User&apos;s Management</Typography>
+        <Typography variant="body2">
+          Manage all registered users in the system — including creating accounts, updating user information, assigning
+          role.
+        </Typography>
       </Box>
       <MaterialReactTable table={table} />
     </Box>
   );
 };
 
-export default HistoryApprovePage;
+export default UsersApplicantPage;

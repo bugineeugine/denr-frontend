@@ -26,8 +26,9 @@ import { Box, Button, Card, CardHeader, CardMedia, FormHelperText, Typography } 
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { NumericFormat } from "react-number-format";
+
 import Comments from "./Comments";
+import useAuth from "@/store/useAuth";
 L.Icon.Default.mergeOptions({
   iconUrl,
   iconRetinaUrl,
@@ -66,11 +67,7 @@ const MapProvider = () => {
       setValue("lng", lng);
     },
   });
-  return (
-    <Marker position={position}>
-      <Popup>{getValues("permit_type")}</Popup>
-    </Marker>
-  );
+  return <Marker position={position}></Marker>;
 };
 
 interface TabPanelProps {
@@ -174,169 +171,6 @@ const DisplayFileContent = () => {
   );
 };
 
-const ComputationContent = () => {
-  const { control, watch, setValue } = useFormContext<PermitSchemaType & { status: string }>();
-  const noTruckloads = watch("noTruckloads");
-  const verificationFee = watch("verificationFee");
-  const oathFee = watch("oathFee");
-  const inspectionFee = watch("inspectionFee");
-
-  useEffect(() => {
-    const total = (verificationFee || 0) + (oathFee || 0) + (inspectionFee || 0) + (noTruckloads || 0);
-
-    setValue("totalAmountDue", total, { shouldValidate: true });
-  }, [verificationFee, oathFee, inspectionFee, setValue, noTruckloads]);
-
-  return (
-    <Grid container spacing={1} className="p-4">
-      <Grid size={12}>
-        <FormControl fullWidth>
-          <FormLabel>No. of Truckloads</FormLabel>
-          <Controller
-            control={control}
-            name={"noTruckloads"}
-            render={({ field: { value, onChange }, fieldState }) => {
-              return (
-                <NumericFormat
-                  value={value}
-                  onValueChange={(e) => {
-                    onChange(e.floatValue);
-                  }}
-                  error={!!fieldState.error}
-                  customInput={TextField}
-                  thousandSeparator
-                  helperText={fieldState.error?.message}
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              );
-            }}
-          />
-        </FormControl>
-      </Grid>
-      <Grid size={12}>
-        <FormControl fullWidth>
-          <FormLabel>Verification Fee</FormLabel>
-          <Controller
-            control={control}
-            name={"verificationFee"}
-            render={({ field: { value, onChange }, fieldState }) => {
-              return (
-                <NumericFormat
-                  value={value}
-                  onValueChange={(e) => {
-                    onChange(e.floatValue);
-                  }}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                  error={!!fieldState.error}
-                  customInput={TextField}
-                  thousandSeparator
-                  helperText={fieldState.error?.message}
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              );
-            }}
-          />
-        </FormControl>
-      </Grid>
-      <Grid size={12}>
-        <FormControl fullWidth>
-          <FormLabel>Oath Fee</FormLabel>
-          <Controller
-            control={control}
-            name={"oathFee"}
-            render={({ field: { value, onChange }, fieldState }) => {
-              return (
-                <NumericFormat
-                  value={value}
-                  onValueChange={(e) => {
-                    onChange(e.floatValue);
-                  }}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                  error={!!fieldState.error}
-                  customInput={TextField}
-                  thousandSeparator
-                  helperText={fieldState.error?.message}
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              );
-            }}
-          />
-        </FormControl>
-      </Grid>
-      <Grid size={12}>
-        <FormControl fullWidth>
-          <FormLabel>Inspection Fee</FormLabel>
-          <Controller
-            control={control}
-            name={"inspectionFee"}
-            render={({ field: { value, onChange }, fieldState }) => {
-              return (
-                <NumericFormat
-                  value={value}
-                  onValueChange={(e) => {
-                    onChange(e.floatValue);
-                  }}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                  error={!!fieldState.error}
-                  customInput={TextField}
-                  thousandSeparator
-                  helperText={fieldState.error?.message}
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              );
-            }}
-          />
-        </FormControl>
-      </Grid>
-      <Grid size={12}>
-        <FormControl fullWidth>
-          <FormLabel>Total Amount Due</FormLabel>
-          <Controller
-            control={control}
-            name={"totalAmountDue"}
-            render={({ field: { value, onChange }, fieldState }) => {
-              return (
-                <NumericFormat
-                  value={value}
-                  onValueChange={(e) => {
-                    onChange(e.floatValue);
-                  }}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                  error={!!fieldState.error}
-                  customInput={TextField}
-                  thousandSeparator
-                  helperText={fieldState.error?.message}
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              );
-            }}
-          />
-        </FormControl>
-      </Grid>
-    </Grid>
-  );
-};
 const FileUploadContent = () => {
   const { control, watch } = useFormContext<PermitSchemaType & { status: string }>();
 
@@ -395,6 +229,7 @@ const FileUploadContent = () => {
 };
 
 const PermitForm = ({ action }: { action?: string }) => {
+  const userData = useAuth((state) => state.userData);
   const { control, getValues } = useFormContext<PermitSchemaType & { status: string }>();
   const [value, setVaueTabs] = useState(0);
 
@@ -407,36 +242,13 @@ const PermitForm = ({ action }: { action?: string }) => {
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} variant="fullWidth" onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Bsic Information" {...a11yProps(0)} />
-          <Tab label="Fee Computation" {...a11yProps(1)} />
-          <Tab label="Upload File" {...a11yProps(2)} />
-          {action === "edit" && <Tab label="Comments" {...a11yProps(3)} />}
+
+          <Tab label="Upload File" {...a11yProps(1)} />
+          {action === "edit" && <Tab label="Comments" {...a11yProps(2)} />}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
         <Grid container spacing={1} className="p-4">
-          <Grid size={12}>
-            <FormControl fullWidth>
-              <FormLabel>Permit Type</FormLabel>
-              <Controller
-                control={control}
-                name="permit_type"
-                render={({ field: { value, onChange }, fieldState: { error } }) => {
-                  return (
-                    <>
-                      <Select value={value} onChange={onChange}>
-                        <MenuItem value=""></MenuItem>
-                        <MenuItem value="Transport">Transport</MenuItem>
-                        <MenuItem value={"Construction"}>Construction</MenuItem>
-                        <MenuItem value={"Business"}>Business</MenuItem>
-                        <MenuItem value={"Event"}>Event</MenuItem>
-                      </Select>
-                      {!!error && <FormHelperText className="text-error">{error.message}</FormHelperText>}
-                    </>
-                  );
-                }}
-              />
-            </FormControl>
-          </Grid>
           {getValues("status") && (
             <Grid size={12}>
               <FormControl fullWidth>
@@ -509,18 +321,22 @@ const PermitForm = ({ action }: { action?: string }) => {
               <TextFieldForm name="destination" />
             </FormControl>
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormControl fullWidth>
-              <FormLabel>Grand Total (cu.m)</FormLabel>
-              <TextFieldForm name="grand_total" />
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormControl fullWidth>
-              <FormLabel>Remaining Balance</FormLabel>
-              <TextFieldForm name="remaning_balance" />
-            </FormControl>
-          </Grid>
+          {userData?.role === "admin" && (
+            <>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth>
+                  <FormLabel>Grand Total (cu.m)</FormLabel>
+                  <TextFieldForm name="grand_total" />
+                </FormControl>
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth>
+                  <FormLabel>Remaining Balance</FormLabel>
+                  <TextFieldForm name="remaning_balance" />
+                </FormControl>
+              </Grid>
+            </>
+          )}
 
           {action === "edit" && (
             <Grid size={{ xs: 12, md: 6 }}>
@@ -591,15 +407,13 @@ const PermitForm = ({ action }: { action?: string }) => {
           </Grid>
         </Grid>
       </CustomTabPanel>
+
       <CustomTabPanel value={value} index={1}>
-        <ComputationContent />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
         {action === "edit" ? <DisplayFileContent /> : <FileUploadContent />}
       </CustomTabPanel>
 
       {action === "edit" && (
-        <CustomTabPanel value={value} index={3}>
+        <CustomTabPanel value={value} index={2}>
           <Comments />
         </CustomTabPanel>
       )}

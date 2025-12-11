@@ -9,6 +9,11 @@ export const matchRoute = (path: string, routes: string[]): string | undefined =
 
 export const adminRoutes: Record<string, string[]> = {
   "/users": ["canViewUsers"],
+  "/users/admin": ["canViewUsers"],
+  "/users/officer": ["canViewUsers"],
+  "/users/applicant": ["canViewUsers"],
+  "/users/validator": ["canViewUsers"],
+
   "/permits": ["canViewPermits"],
   "/dashboard": ["canViewDashboard"],
   "/home": ["canViewHome"],

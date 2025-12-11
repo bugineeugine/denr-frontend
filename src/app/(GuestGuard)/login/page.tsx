@@ -44,6 +44,7 @@ import MuiTabList from "@mui/material/Tabs";
 import MuiTab from "@mui/material/Tab";
 import { FormControl, IconButton, InputAdornment, Paper, TextField } from "@mui/material";
 import { AuthData } from "@/types/auth";
+import Link from "next/link";
 
 const Tab = styled(MuiTab)(({ theme }) => {
   return {
@@ -380,15 +381,17 @@ const LoginPage = () => {
         <div className="w-full max-w-md relative z-10">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-denr-green rounded-full mb-4 shadow-lg">
-              <Image
-                src="/denr.png"
-                alt="Logo"
-                width={80}
-                height={80}
-                className="mx-auto mb-4 rounded-full bg-white p-2"
-              />
-            </div>
+            <Link passHref href={"/"}>
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-denr-green rounded-full mb-4 shadow-lg">
+                <Image
+                  src="/denr.png"
+                  alt="Logo"
+                  width={80}
+                  height={80}
+                  className="mx-auto mb-4 rounded-full bg-white p-2"
+                />
+              </div>
+            </Link>
             <h1 className="text-3xl font-bold text-denr-green mb-2">DENR - CENRO</h1>
             <p className="text-gray-600 text-sm">Centralized Permit Verification System</p>
           </div>

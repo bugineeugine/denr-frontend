@@ -26,13 +26,7 @@ const menuListItem: MenuItemListType = [
     segment: "permits",
     action: ["canViewPermits"],
   },
-  {
-    label: "Citizen Charter",
-    icon: DocumentScannerOutlinedIcon,
-    href: "/citizen",
-    segment: "citizen",
-    action: ["canViewCitizen"],
-  },
+
   {
     label: "Approval",
     segment: "approval",

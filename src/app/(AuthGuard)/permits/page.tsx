@@ -22,6 +22,7 @@ import DeletePermit from "@/components/permit/DeletePermit";
 
 import ViewPermit from "@/components/permit/ViewPermit";
 import HasPermissionsClient from "@/components/HasPermissionsClient";
+import LinearProgress from "@mui/material/LinearProgress";
 const PermitsPage = () => {
   const { data, isLoading } = useQuery<PermitListsType>({
     queryKey: ["permit-lists"],
@@ -54,14 +55,13 @@ const PermitsPage = () => {
       },
       {
         accessorKey: "permit_no",
-        header: "Permit No.",
+        header: "App No #.",
         enableColumnFilter: false,
       },
       {
         accessorKey: "permit_type",
         header: "Permit Type",
-        filterVariant: "select",
-        filterSelectOptions: ["Transport", "Business", "Construction", "Event"],
+        enableColumnFilter: false,
       },
 
       {
@@ -75,6 +75,28 @@ const PermitsPage = () => {
             <Typography variant="body2">
               {issuedDate} - {expiryDate}
             </Typography>
+          );
+        },
+      },
+      {
+        accessorKey: "steps",
+        header: "Progress",
+        enableColumnFilter: false,
+        Cell: ({ row }) => {
+          const steps = row.original.steps;
+
+          const progress = (steps / 9) * 100;
+
+          return (
+            <Box className="flex items-center gap-3 w-full">
+              <LinearProgress
+                variant="determinate"
+                color="info"
+                value={progress}
+                className="w-full h-2.5 rounded-full"
+              />
+              <Box className="min-w-[50px] text-sm font-medium ">{Math.round(progress)}%</Box>
+            </Box>
           );
         },
       },

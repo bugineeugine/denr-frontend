@@ -10,65 +10,70 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
-import { ResponseCitizenCharterType, CitizenCharterType } from "@/types/citizenCharter";
-import LinearProgress from "@mui/material/LinearProgress";
+import { PermitDataType, PermitListsType } from "@/types/permit";
 import ViewCitizenCharter from "@/components/CitizenCharter/ViewCitizenCharter";
+import ViewPermit from "@/components/permit/ViewPermit";
 const ForApprovalPage = () => {
-  const { data, isLoading } = useQuery<ResponseCitizenCharterType>({
-    queryKey: ["citizen-lists-approval"],
+  const { data, isLoading } = useQuery<PermitListsType>({
+    queryKey: ["permits"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/citizen-charter/by-position");
+      const response = await axiosInstance.get("/permits/approval/steps");
       return response.data;
     },
     retry: false,
   });
+  const [selectedRowData, setSelectedRowData] = useState<PermitDataType | null>(null);
 
-  const columns = useMemo<MRT_ColumnDef<CitizenCharterType>[]>(
+  const handleClose = () => {
+    setSelectedRowData(null);
+  };
+  const columns = useMemo<MRT_ColumnDef<PermitDataType>[]>(
     () => [
       {
-        accessorKey: "citizen_no",
-        header: "Citizen No #.",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "type_transaction",
-        header: "Transaciton Type",
-        filterVariant: "select",
-        filterSelectOptions: [
-          "G2B - Government to Business",
-          "G2C - Government to Citizen",
-          "G2G - Government to Government",
-        ],
-      },
-      {
-        accessorKey: "status",
-        header: "Status",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "steps",
-        header: "Progress",
+        accessorKey: "qrcode",
+        header: "QR Code",
         enableColumnFilter: false,
         Cell: ({ row }) => {
-          const steps = row.original.steps;
-
-          const progress = (steps / 9) * 100;
-
+          const fileName = row.original.qrcode;
           return (
-            <Box className="flex items-center gap-3 w-full">
-              <LinearProgress
-                variant="determinate"
-                color="info"
-                value={progress}
-                className="w-full h-2.5 rounded-full"
-              />
-              <Box className="min-w-[50px] text-sm font-medium ">{Math.round(progress)}%</Box>
-            </Box>
+            <Avatar
+              alt="QR"
+              sx={{ height: 50, width: 50 }}
+              variant="square"
+              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/qrcodes/${fileName}`}
+            />
+          );
+        },
+        size: 50,
+        enableSorting: false,
+      },
+      {
+        accessorKey: "permit_no",
+        header: "App No #.",
+        enableColumnFilter: false,
+      },
+      {
+        accessorKey: "permit_type",
+        header: "Permit Type",
+        enableColumnFilter: false,
+      },
+
+      {
+        accessorKey: "expiry_date",
+        header: "Valid Until",
+        enableColumnFilter: false,
+        Cell: ({ row }) => {
+          const expiryDate = row.original.expiry_date;
+          const issuedDate = row.original.issued_date;
+          return (
+            <Typography variant="body2">
+              {issuedDate} - {expiryDate}
+            </Typography>
           );
         },
       },
@@ -87,15 +92,16 @@ const ForApprovalPage = () => {
           );
         },
       },
+
       {
         id: "action",
         header: "Action",
         size: 100,
         Cell: ({ row }) => {
-          const citizenCharter = row.original;
+          const permit = row.original;
           return (
             <Box className="space-x-1">
-              <ViewCitizenCharter citizenCharter={citizenCharter} />
+              <ViewPermit permit={permit} />
             </Box>
           );
         },
@@ -149,6 +155,12 @@ const ForApprovalPage = () => {
         backgroundColor: "var(--mui-palette-background-default)",
       },
     },
+    muiTableBodyRowProps: ({ row }) => ({
+      onClick: () => {
+        setSelectedRowData(row.original);
+      },
+      style: { cursor: "pointer" },
+    }),
     renderTopToolbar: ({ table }) => {
       return (
         <Box
@@ -170,7 +182,7 @@ const ForApprovalPage = () => {
   return (
     <Box className="m-2 space-y-2">
       <Box>
-        <Typography variant="h6">Citizen Charter Requests</Typography>
+        <Typography variant="h6">Application&apos;s Requests</Typography>
         <Typography variant="body2">View and Truck their status.</Typography>
       </Box>
       <MaterialReactTable table={table} />

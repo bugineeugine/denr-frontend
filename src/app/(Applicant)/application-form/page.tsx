@@ -18,6 +18,9 @@ import { PermitListsType, PermitDataType } from "@/types/permit";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import useAuth from "@/store/useAuth";
+import LinearProgress from "@mui/material/LinearProgress";
+
+import ViewPermit from "@/components/permit/ViewPermit";
 
 const ApplicationForm = () => {
   const userData = useAuth((state) => state.userData);
@@ -51,11 +54,7 @@ const ApplicationForm = () => {
       },
       {
         accessorKey: "permit_no",
-        header: "Permit No.",
-      },
-      {
-        accessorKey: "permit_type",
-        header: "Permit Type",
+        header: "App No #",
       },
 
       {
@@ -71,7 +70,33 @@ const ApplicationForm = () => {
           );
         },
       },
+      {
+        accessorKey: "status_step",
+        header: "Status Step",
+        enableColumnFilter: false,
+      },
+      {
+        accessorKey: "steps",
+        header: "Progress",
+        enableColumnFilter: false,
+        Cell: ({ row }) => {
+          const steps = row.original.steps;
 
+          const progress = (steps / 9) * 100;
+
+          return (
+            <Box className="flex items-center gap-3 w-full">
+              <LinearProgress
+                variant="determinate"
+                color="info"
+                value={progress}
+                className="w-full h-2.5 rounded-full"
+              />
+              <Box className="min-w-[50px] text-sm font-medium ">{Math.round(progress)}%</Box>
+            </Box>
+          );
+        },
+      },
       {
         accessorKey: "status",
         header: "Status",
@@ -90,6 +115,20 @@ const ApplicationForm = () => {
                       : "primary"
               }
             />
+          );
+        },
+      },
+
+      {
+        id: "action",
+        header: "Action",
+        size: 100,
+        Cell: ({ row }) => {
+          const permit = row.original;
+          return (
+            <Box className="space-x-1">
+              <ViewPermit permit={permit} />
+            </Box>
           );
         },
       },
@@ -141,6 +180,7 @@ const ApplicationForm = () => {
         backgroundColor: "var(--mui-palette-background-default)",
       },
     },
+
     renderTopToolbar: ({ table }) => {
       return (
         <Box

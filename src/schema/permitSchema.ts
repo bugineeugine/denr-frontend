@@ -2,7 +2,6 @@ import * as z from "zod";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "application/pdf"];
 export const permitSchema = z.object({
-  permit_type: z.string().nonempty({ error: "Permit is required" }),
   land_owner: z.string().nonempty({ error: "Landowner is required" }),
   contact_no: z.string().nonempty({ error: "Contact No. is required" }),
   location: z.string().nonempty({ error: "Location is required" }),
@@ -12,16 +11,12 @@ export const permitSchema = z.object({
   plate_no: z.string().nonempty({ error: "Vehicle / Plate No. is required" }),
   destination: z.string().nonempty({ error: "Destination is required" }),
   expiry_date: z.string().nonempty({ error: "Expiry Date is required" }),
-  grand_total: z.string().nonempty({ error: "Grand Total (cu.m) is required" }),
-  remaning_balance: z.string().nonempty({ error: "Remaining Balance is required" }),
+  grand_total: z.string().optional().default("0"),
+  remaning_balance: z.string().optional().default("0"),
   issued_date: z.string().nonempty({ error: "Issued Date is required" }),
   lng: z.number(),
   lat: z.number(),
-  noTruckloads: z.number(),
-  verificationFee: z.number(),
-  oathFee: z.number(),
-  inspectionFee: z.number(),
-  totalAmountDue: z.number(),
+
   requestLetter: z
     .instanceof(File, { message: "Please select an  file." })
     .refine((file) => file.size <= MAX_FILE_SIZE, {

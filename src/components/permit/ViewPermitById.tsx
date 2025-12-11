@@ -14,7 +14,18 @@ import AttachMoney from "@mui/icons-material/AttachMoney";
 
 import { PermitDataType } from "@/types/permit";
 import Avatar from "@mui/material/Avatar";
-
+import "leaflet/dist/leaflet.css";
+import { MapContainer } from "react-leaflet/MapContainer";
+import iconUrl from "leaflet/dist/images/marker-icon.png";
+import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+import shadowUrl from "leaflet/dist/images/marker-shadow.png";
+import { Marker, Popup, TileLayer } from "react-leaflet";
+import L from "leaflet";
+L.Icon.Default.mergeOptions({
+  iconUrl,
+  iconRetinaUrl,
+  shadowUrl,
+});
 interface InfoRowProps {
   label: string;
   value?: string | number | ReactNode;
@@ -122,26 +133,34 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
           </div>
         </Section>
 
+        {/* Financial Information */}
+        <Section title="Financial Information">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            <InfoRow label="Grand Total" value={permit.grand_total} icon={AttachMoney} />
+            <InfoRow label="Remaining Balance" value={permit.remaning_balance} icon={AttachMoney} />
+          </div>
+        </Section>
         {/* Location Coordinates */}
         <Section title="Location Coordinates">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             <InfoRow label="Longitude" value={permit.lng} icon={LocationOn} />
             <InfoRow label="Latitude" value={permit.lat} icon={LocationOn} />
           </div>
+          <MapContainer
+            center={[permit.lat, permit.lng]}
+            zoom={6}
+            scrollWheelZoom={true}
+            style={{ height: "50vh", width: "100%" }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker position={[permit.lat, permit.lng]}>
+              <Popup>{permit.permit_type}</Popup>
+            </Marker>
+          </MapContainer>
         </Section>
-
-        {/* Financial Information */}
-        <Section title="Financial Information">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            <InfoRow label="Verification Fee" value={permit.verificationFee} icon={AttachMoney} />
-            <InfoRow label="Oath Fee" value={permit.oathFee} icon={AttachMoney} />
-            <InfoRow label="Inspection Fee" value={permit.inspectionFee} icon={AttachMoney} />
-            <InfoRow label="Total Amount Due" value={permit.totalAmountDue} icon={AttachMoney} />
-            <InfoRow label="Grand Total" value={permit.grand_total} icon={AttachMoney} />
-            <InfoRow label="Remaining Balance" value={permit.remaning_balance} icon={AttachMoney} />
-          </div>
-        </Section>
-
         <Section title="Required Documents">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             <InfoRow label="Request Letter" value={permit.requestLetter} icon={Description} />
