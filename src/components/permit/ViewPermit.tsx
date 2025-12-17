@@ -51,7 +51,7 @@ interface Comment {
   };
 }
 
-const Comments = ({ pertmiId }: { pertmiId: string }) => {
+export const Comments = ({ pertmiId }: { pertmiId: string }) => {
   const { data } = useQuery<Comment[]>({
     queryKey: ["comments", { pertmiId }],
     queryFn: async () => {

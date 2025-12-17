@@ -20,9 +20,9 @@ import Avatar from "@mui/material/Avatar";
 import EditPermit from "@/components/permit/EditPermit";
 import DeletePermit from "@/components/permit/DeletePermit";
 
-import ViewPermit from "@/components/permit/ViewPermit";
 import HasPermissionsClient from "@/components/HasPermissionsClient";
 import LinearProgress from "@mui/material/LinearProgress";
+import PermitDrawer from "@/components/permit/PermitDrawer";
 const PermitsPage = () => {
   const { data, isLoading } = useQuery<PermitListsType>({
     queryKey: ["permit-lists"],
@@ -147,8 +147,7 @@ const PermitsPage = () => {
           const permit = row.original;
           return (
             <Box className="space-x-1">
-              <ViewPermit permit={permit} />
-
+              <PermitDrawer permit={permit} />
               <EditPermit permit={permit} />
 
               <HasPermissionsClient action={["canDeletePermit"]}>

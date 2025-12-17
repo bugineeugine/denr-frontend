@@ -21,6 +21,7 @@ import useAuth from "@/store/useAuth";
 import LinearProgress from "@mui/material/LinearProgress";
 
 import ViewPermit from "@/components/permit/ViewPermit";
+import PermitDrawer from "@/components/permit/PermitDrawer";
 
 const ApplicationForm = () => {
   const userData = useAuth((state) => state.userData);
@@ -127,7 +128,7 @@ const ApplicationForm = () => {
           const permit = row.original;
           return (
             <Box className="space-x-1">
-              <ViewPermit permit={permit} />
+              <PermitDrawer permit={permit} />
             </Box>
           );
         },
