@@ -33,16 +33,16 @@ const menuListItem: MenuItemListType = [
     icon: ApprovalOutlinedIcon,
     children: [
       {
-        label: "History Approve",
-        href: "/history-approve",
-        segment: "history-approve",
-        action: ["canViewHistoryApprove"],
-      },
-      {
         label: "For Approval",
         href: "/for-approval",
         segment: "for-approval",
         action: ["canViewForApproval"],
+      },
+      {
+        label: "History Approve",
+        href: "/history-approve",
+        segment: "history-approve",
+        action: ["canViewHistoryApprove"],
       },
     ],
   },
