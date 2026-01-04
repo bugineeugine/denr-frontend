@@ -127,11 +127,11 @@ const PermitsPage = () => {
             <Chip
               label={status}
               color={
-                status === "Active"
+                status === "Pending"
                   ? "info"
                   : status === "Expired"
                     ? "error"
-                    : status === "Cancelled"
+                    : status === "Rejected"
                       ? "warning"
                       : "primary"
               }
