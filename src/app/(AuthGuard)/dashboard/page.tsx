@@ -38,7 +38,7 @@ const DashboardPage = async () => {
                     {permits.totalPermits.toLocaleString()}
                   </Typography>
                   <Typography variant="body2" className="opacity-90">
-                    Total Permits
+                    Total Applications
                   </Typography>
                 </Box>
               </Box>
@@ -54,7 +54,7 @@ const DashboardPage = async () => {
                     {permits.permitsToday.toLocaleString()}
                   </Typography>
                   <Typography variant="body2" className="opacity-90">
-                    Permits Today
+                    Applications Submitted Today
                   </Typography>
                 </Box>
               </Box>
@@ -70,7 +70,7 @@ const DashboardPage = async () => {
                     {permits.permitsThisWeek.toLocaleString()}
                   </Typography>
                   <Typography variant="body2" className="opacity-90">
-                    Permits This Week
+                    Applications This Week
                   </Typography>
                 </Box>
               </Box>
@@ -86,7 +86,7 @@ const DashboardPage = async () => {
                     {permits.permitsThisMonth.toLocaleString()}
                   </Typography>
                   <Typography variant="body2" className="opacity-90">
-                    Permits This Month
+                    Applications This Month
                   </Typography>
                 </Box>
               </Box>
@@ -101,7 +101,7 @@ const DashboardPage = async () => {
 
         <Grid size={{ xs: 12, md: 7 }}>
           <Card variant="outlined" className="h-full">
-            <CardHeader className="pb-0" title="Latest Created" />
+            <CardHeader className="pb-0" title="Recent Applications" />
             <CardContent className="py-0">
               <List dense className="overflow-auto h-[350px]">
                 {permits.latestPermits.map((permit) => {

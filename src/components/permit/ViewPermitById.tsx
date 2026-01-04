@@ -55,14 +55,14 @@ const Section: FC<SectionProps> = ({ title, children }) => (
 export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case "active":
-        return "bg-green-100 text-green-800";
-      case "expired":
-        return "bg-red-100 text-red-800";
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-info ";
+      case "expired":
+        return "bg-error ";
+      case "rejected":
+        return "bg-warning ";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-success ";
     }
   };
 
@@ -157,7 +157,7 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <Marker position={[permit.lat, permit.lng]}>
-              <Popup>{permit.permit_type}</Popup>
+              <Popup>{permit.permit_no}</Popup>
             </Marker>
           </MapContainer>
         </Section>

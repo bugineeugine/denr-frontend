@@ -1,3 +1,4 @@
+"use client";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
@@ -140,11 +141,11 @@ const PermitDrawer = ({ permit }: { permit: PermitDataType }) => {
               label={permit.status}
               className=" capitalize'"
               color={
-                permit.status === "Active"
+                permit.status === "Pending"
                   ? "info"
                   : permit.status === "Expired"
                     ? "error"
-                    : permit.status === "Cancelled"
+                    : permit.status === "Rejected"
                       ? "warning"
                       : "primary"
               }

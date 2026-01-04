@@ -1,4 +1,5 @@
 import PermitStatus from "@/components/dashboard/PermitStatus";
+import PermitDrawer from "@/components/permit/PermitDrawer";
 import PermitMapByUser from "@/components/permit/PermitMapByUser";
 import { DashboardDatatype } from "@/types/dashboard";
 import axiosInstance from "@/utils/axiosInstance";
@@ -39,7 +40,7 @@ const HomPage = async () => {
                     {permits.totalPermits.toLocaleString()}
                   </Typography>
                   <Typography variant="body2" className="opacity-90">
-                    Total Permits
+                    Total Applications
                   </Typography>
                 </Box>
               </Box>
@@ -55,7 +56,7 @@ const HomPage = async () => {
                     {permits.permitsToday.toLocaleString()}
                   </Typography>
                   <Typography variant="body2" className="opacity-90">
-                    Permits Today
+                    Applications Submitted Today
                   </Typography>
                 </Box>
               </Box>
@@ -71,7 +72,7 @@ const HomPage = async () => {
                     {permits.permitsThisWeek.toLocaleString()}
                   </Typography>
                   <Typography variant="body2" className="opacity-90">
-                    Permits This Week
+                    Applications This Week
                   </Typography>
                 </Box>
               </Box>
@@ -87,7 +88,7 @@ const HomPage = async () => {
                     {permits.permitsThisMonth.toLocaleString()}
                   </Typography>
                   <Typography variant="body2" className="opacity-90">
-                    Permits This Month
+                    Applications This Month
                   </Typography>
                 </Box>
               </Box>
@@ -98,11 +99,17 @@ const HomPage = async () => {
       <Grid container spacing={1}>
         <Grid size={{ xs: 12, md: 7 }}>
           <Card variant="outlined" className="h-full">
-            <CardHeader className="pb-0" title="Latest Created" />
+            <CardHeader className="pb-0" title="My Recent Applications" />
             <CardContent className="py-0">
               <List dense className="overflow-auto h-[350px]">
-                {permits.latestPermits.map((permit) => {
-                  return (
+                {permits.latestPermits.length === 0 ? (
+                  <ListItem className="h-full flex justify-center items-center">
+                    <Typography variant="body1" color="text.secondary" className="text-center py-6">
+                      You have not submitted any application yet.
+                    </Typography>
+                  </ListItem>
+                ) : (
+                  permits.latestPermits.map((permit) => (
                     <ListItem
                       key={permit.id}
                       secondaryAction={
@@ -114,15 +121,18 @@ const HomPage = async () => {
                     >
                       <ListItemText
                         primary={
-                          <Typography>
-                            {permit.permit_type} - {permit.permit_no}
-                          </Typography>
+                          <Box className="flex items-center space-x-2">
+                            <PermitDrawer permit={permit} />
+                            <Typography>
+                              {permit.permit_type} - {permit.permit_no}
+                            </Typography>
+                          </Box>
                         }
                         secondary={permit.status}
                       />
                     </ListItem>
-                  );
-                })}
+                  ))
+                )}
               </List>
             </CardContent>
           </Card>

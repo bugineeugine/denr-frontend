@@ -53,10 +53,10 @@ const AnnualyPermit = ({ permitByYear }: { permitByYear: DashboardDatatype["perm
       Business: Number(item.Business),
       Construction: Number(item.Construction),
     }));
-
+  console.log({ permitByYear });
   return (
     <Card variant="outlined" className="h-full">
-      <CardHeader className="pb-0" title="Permit Trend Analysis" subheader="Annualy Performance Summary" />
+      <CardHeader className="pb-0" title="Application Trend Analysis" subheader="Annualy Performance Summary" />
       <CardContent className="h-[350px]">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 0, right: 0, left: 0, bottom: 0 }} barCategoryGap={"45%"}>
@@ -81,16 +81,8 @@ const AnnualyPermit = ({ permitByYear }: { permitByYear: DashboardDatatype["perm
               tick={{ fill: "var(--mui-palette-text-primary)", fontSize: 12 }}
             />
             <Tooltip cursor={false} content={<CustomTooltipPaper />} />
-            <Area
-              type="monotone"
-              dataKey="total"
-              stroke={"var(--mui-palette-primary-main)"}
-              fill="url(#colorUvTotal)"
-            />
-            <Bar dataKey="Business" stackId="a" fill={alpha(teal[900], 0.7)} radius={[0, 0, 0, 0]} />
-            <Bar dataKey="Event" stackId="a" fill={alpha(teal[700], 0.6)} radius={[0, 0, 0, 0]} />
-            <Bar dataKey="Construction" stackId="a" fill={alpha(teal[500], 0.4)} radius={[0, 0, 0, 0]} />
-            <Bar dataKey="Transport" stackId="a" fill={alpha(teal[300], 0.3)} radius={[10, 10, 0, 0]} />
+
+            <Bar dataKey="total" stackId="a" fill={alpha(teal[300], 0.3)} radius={[10, 10, 0, 0]} />
           </ComposedChart>
         </ResponsiveContainer>
       </CardContent>

@@ -25,7 +25,7 @@ const PermitMapByUser = ({ permits }: { permits: PermitDataType[] }) => {
       {permits.map((permit) => (
         <Marker key={permit.id} position={[permit.lat, permit.lng]}>
           <Tooltip permanent direction="top">
-            {permit.permit_type}
+            {permit.permit_no}
           </Tooltip>
         </Marker>
       ))}

@@ -5,15 +5,14 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import { blue, green, orange, red } from "@mui/material/colors";
-import { useState } from "react";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
 import { PieSectorDataItem } from "recharts/types/polar/Pie";
 
 const COLORS: Record<string, string> = {
-  Active: blue["A400"],
-  Used: green["A400"],
+  Pending: blue["A400"],
+  Approved: green["A400"],
   Expired: red["A400"],
-  Cancelled: orange["A400"],
+  Rejected: orange["A400"],
 };
 
 const renderActiveShape = ({
@@ -88,7 +87,7 @@ const PermitStatus = ({ permitsByStatus }: { permitsByStatus: DashboardDatatype[
     <Card variant="outlined" className="h-full">
       <CardHeader
         className="pb-0"
-        title="Permit Status Distribution"
+        title="Application Status Distribution"
         subheader="Breakdown of permits by current status"
       />
       <CardContent className="h-[350px]">

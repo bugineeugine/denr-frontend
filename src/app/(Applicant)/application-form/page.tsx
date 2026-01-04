@@ -20,8 +20,13 @@ import Avatar from "@mui/material/Avatar";
 import useAuth from "@/store/useAuth";
 import LinearProgress from "@mui/material/LinearProgress";
 
-import ViewPermit from "@/components/permit/ViewPermit";
 import PermitDrawer from "@/components/permit/PermitDrawer";
+const NoResultsComponent = () => (
+  <Box sx={{ padding: "16px", textAlign: "center" }}>
+    <Typography variant="h6">You have no applications yet</Typography>
+    <Typography variant="body2">Click the “Application” button to submit your first request.</Typography>
+  </Box>
+);
 
 const ApplicationForm = () => {
   const userData = useAuth((state) => state.userData);
@@ -107,11 +112,11 @@ const ApplicationForm = () => {
             <Chip
               label={status}
               color={
-                status === "Active"
+                status === "Pending"
                   ? "info"
                   : status === "Expired"
                     ? "error"
-                    : status === "Cancelled"
+                    : status === "Rejected"
                       ? "warning"
                       : "primary"
               }
@@ -181,7 +186,7 @@ const ApplicationForm = () => {
         backgroundColor: "var(--mui-palette-background-default)",
       },
     },
-
+    renderEmptyRowsFallback: () => <NoResultsComponent />,
     renderTopToolbar: ({ table }) => {
       return (
         <Box

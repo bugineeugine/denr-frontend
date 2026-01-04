@@ -260,10 +260,10 @@ const PermitForm = ({ action }: { action?: string }) => {
                     return (
                       <>
                         <Select value={value} onChange={onChange}>
-                          <MenuItem value="Active">Active</MenuItem>
-                          <MenuItem value={"Used"}>Used</MenuItem>
+                          <MenuItem value="Pending">Pending</MenuItem>
+                          <MenuItem value={"Approved"}>Approved</MenuItem>
                           <MenuItem value={"Expired"}>Expired</MenuItem>
-                          <MenuItem value={"Cancelled"}>Cancelled</MenuItem>
+                          <MenuItem value={"Rejected"}>Rejected</MenuItem>
                         </Select>
                       </>
                     );
