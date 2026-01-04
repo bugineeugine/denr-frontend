@@ -74,7 +74,7 @@ const History = ({ permit }: { permit: PermitDataType }) => {
           },
         }}
       >
-        {[...steps].reverse().map((label, index) => {
+        {steps.map((label, index) => {
           const findData = data?.data[index];
           const isCompleted = index < currentStep;
           const isCurrent = index === currentStep;
