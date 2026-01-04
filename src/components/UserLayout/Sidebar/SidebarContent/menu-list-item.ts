@@ -20,7 +20,7 @@ const menuListItem: MenuItemListType = [
     action: ["canViewUsers"],
   },
   {
-    label: "Permits",
+    label: "Applications",
     icon: DescriptionOutlinedIcon,
     href: "/permits",
     segment: "permits",
