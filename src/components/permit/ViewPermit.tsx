@@ -280,34 +280,7 @@ const ViewPermit = ({ permit }: { permit: PermitDataType }) => {
                         />
                       </Grid>
                     </Grid>
-                    <Grid container spacing={1}>
-                      <Grid size={"grow"}>
-                        <Typography variant="subtitle1" className="text-xs text-gray-600">
-                          Landowner
-                        </Typography>
-                        <Typography className="text-md font-medium">{permit.land_owner}</Typography>
-                      </Grid>
-                      <Grid size={"grow"}>
-                        <Typography variant="subtitle1" className="text-xs text-gray-600">
-                          Contact No.
-                        </Typography>
-                        <Typography className="text-md font-medium">{permit.contact_no}</Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid container spacing={1}>
-                      <Grid size={"grow"}>
-                        <Typography variant="subtitle1" className="text-xs text-gray-600">
-                          Location
-                        </Typography>
-                        <Typography className="text-md font-medium">{permit.location}</Typography>
-                      </Grid>
-                      <Grid size={"grow"}>
-                        <Typography variant="subtitle1" className="text-xs text-gray-600">
-                          Area (sq.m)
-                        </Typography>
-                        <Typography className="text-md font-medium">{permit.area}</Typography>
-                      </Grid>
-                    </Grid>
+
                     <Grid container spacing={1}>
                       <Grid size={"grow"}>
                         <Typography variant="subtitle1" className="text-xs text-gray-600">
@@ -315,41 +288,8 @@ const ViewPermit = ({ permit }: { permit: PermitDataType }) => {
                         </Typography>
                         <Typography className="text-md font-medium">{permit.species}</Typography>
                       </Grid>
-                      <Grid size={"grow"}>
-                        <Typography variant="subtitle1" className="text-xs text-gray-600">
-                          Total Volume
-                        </Typography>
-                        <Typography className="text-md font-medium">{permit.total_volume}</Typography>
-                      </Grid>
                     </Grid>
-                    <Grid container spacing={1}>
-                      <Grid size={"grow"}>
-                        <Typography variant="subtitle1" className="text-xs text-gray-600">
-                          Vehicle / Plate No.
-                        </Typography>
-                        <Typography className="text-md font-medium">{permit.plate_no}</Typography>
-                      </Grid>
-                      <Grid size={"grow"}>
-                        <Typography variant="subtitle1" className="text-xs text-gray-600">
-                          Destination
-                        </Typography>
-                        <Typography className="text-md font-medium">{permit.destination}</Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid container spacing={1}>
-                      <Grid size={"grow"}>
-                        <Typography variant="subtitle1" className="text-xs text-gray-600">
-                          Grand Total (cu.m)
-                        </Typography>
-                        <Typography className="text-md font-medium">{permit.grand_total}</Typography>
-                      </Grid>
-                      <Grid size={"grow"}>
-                        <Typography variant="subtitle1" className="text-xs text-gray-600">
-                          Remaining Balance
-                        </Typography>
-                        <Typography className="text-md font-medium">{permit.remaning_balance}</Typography>
-                      </Grid>
-                    </Grid>
+
                     <Grid container spacing={1}>
                       <Grid size={"grow"}>
                         <Typography variant="subtitle1" className="text-xs text-gray-600">

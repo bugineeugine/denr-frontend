@@ -21,8 +21,9 @@ import EditPermit from "@/components/permit/EditPermit";
 import DeletePermit from "@/components/permit/DeletePermit";
 
 import HasPermissionsClient from "@/components/HasPermissionsClient";
-import LinearProgress from "@mui/material/LinearProgress";
+
 import PermitDrawer from "@/components/permit/PermitDrawer";
+import PrintPermit from "@/components/permit/PrintPermit";
 const PermitsPage = () => {
   const { data, isLoading } = useQuery<PermitListsType>({
     queryKey: ["permit-lists"],
@@ -85,17 +86,14 @@ const PermitsPage = () => {
         Cell: ({ row }) => {
           const steps = row.original.steps;
 
-          const progress = (steps / 9) * 100;
-
           return (
             <Box className="flex items-center gap-3 w-full">
-              <LinearProgress
-                variant="determinate"
-                color="info"
-                value={progress}
-                className="w-full h-2.5 rounded-full"
+              <Chip
+                size="small"
+                variant="outlined"
+                label={steps === 9 ? "ROCESS COMPLETE" : "IN PROGRESS"}
+                color={steps === 9 ? "success" : "secondary"}
               />
-              <Box className="min-w-[50px] text-sm font-medium ">{Math.round(progress)}%</Box>
             </Box>
           );
         },
@@ -119,7 +117,7 @@ const PermitsPage = () => {
         accessorKey: "status",
         header: "Status",
         filterVariant: "select",
-        filterSelectOptions: ["Active", "Expired", "Used", "Cancelled"],
+        filterSelectOptions: ["Pending", "Expired", "Approved", "Rejected"],
 
         Cell: ({ row }) => {
           const status = row.original.status;
@@ -142,14 +140,15 @@ const PermitsPage = () => {
       {
         id: "action",
         header: "Action",
-        size: 100,
+        size: 150,
         Cell: ({ row }) => {
           const permit = row.original;
+          const status = row.original.status;
           return (
             <Box className="space-x-1">
               <PermitDrawer permit={permit} />
               <EditPermit permit={permit} />
-
+              {status === "Approved" && <PrintPermit permit={permit} />}
               <HasPermissionsClient action={["canDeletePermit"]}>
                 <DeletePermit permit={permit} />
               </HasPermissionsClient>
@@ -158,7 +157,7 @@ const PermitsPage = () => {
         },
       },
     ],
-    []
+    [],
   );
   const table = useMaterialReactTable({
     columns,
@@ -227,10 +226,10 @@ const PermitsPage = () => {
   return (
     <Box className="m-2 space-y-2">
       <Box>
-        <Typography variant="h6">Permit Management</Typography>
+        <Typography variant="h6">Application Management</Typography>
         <Typography variant="body2">
-          Manage all permits in the system — including creating new permits, updating permit information, and tracking
-          their status.
+          Manage all applications in the system — including creating new applications, updating application information,
+          and tracking their status.
         </Typography>
       </Box>
       <MaterialReactTable table={table} />

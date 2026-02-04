@@ -18,9 +18,9 @@ import { PermitListsType, PermitDataType } from "@/types/permit";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import useAuth from "@/store/useAuth";
-import LinearProgress from "@mui/material/LinearProgress";
 
 import PermitDrawer from "@/components/permit/PermitDrawer";
+import PrintPermit from "@/components/permit/PrintPermit";
 const NoResultsComponent = () => (
   <Box sx={{ padding: "16px", textAlign: "center" }}>
     <Typography variant="h6">You have no applications yet</Typography>
@@ -88,17 +88,14 @@ const ApplicationForm = () => {
         Cell: ({ row }) => {
           const steps = row.original.steps;
 
-          const progress = (steps / 9) * 100;
-
           return (
             <Box className="flex items-center gap-3 w-full">
-              <LinearProgress
-                variant="determinate"
-                color="info"
-                value={progress}
-                className="w-full h-2.5 rounded-full"
+              <Chip
+                size="small"
+                variant="outlined"
+                label={steps === 9 ? "ROCESS COMPLETE" : "IN PROGRESS"}
+                color={steps === 9 ? "success" : "secondary"}
               />
-              <Box className="min-w-[50px] text-sm font-medium ">{Math.round(progress)}%</Box>
             </Box>
           );
         },
@@ -131,15 +128,17 @@ const ApplicationForm = () => {
         size: 100,
         Cell: ({ row }) => {
           const permit = row.original;
+          const status = row.original.status;
           return (
             <Box className="space-x-1">
+              {status === "Approved" && <PrintPermit permit={permit} />}
               <PermitDrawer permit={permit} />
             </Box>
           );
         },
       },
     ],
-    []
+    [],
   );
   const table = useMaterialReactTable({
     columns,

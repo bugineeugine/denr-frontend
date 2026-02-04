@@ -9,15 +9,15 @@ import {
   MRT_GlobalFilterTextField,
   useMaterialReactTable,
 } from "material-react-table";
-
-import { useMemo, useState } from "react";
+import "leaflet/dist/leaflet.css";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import { PermitDataType, PermitListsType } from "@/types/permit";
-import ViewCitizenCharter from "@/components/CitizenCharter/ViewCitizenCharter";
-import ViewPermit from "@/components/permit/ViewPermit";
+
+import PermitDrawer from "@/components/permit/PermitDrawer";
 const ForApprovalPage = () => {
   const { data, isLoading } = useQuery<PermitListsType>({
     queryKey: ["permits"],
@@ -27,11 +27,7 @@ const ForApprovalPage = () => {
     },
     retry: false,
   });
-  const [selectedRowData, setSelectedRowData] = useState<PermitDataType | null>(null);
 
-  const handleClose = () => {
-    setSelectedRowData(null);
-  };
   const columns = useMemo<MRT_ColumnDef<PermitDataType>[]>(
     () => [
       {
@@ -99,15 +95,11 @@ const ForApprovalPage = () => {
         size: 100,
         Cell: ({ row }) => {
           const permit = row.original;
-          return (
-            <Box className="space-x-1">
-              <ViewPermit permit={permit} />
-            </Box>
-          );
+          return <PermitDrawer permit={permit} />;
         },
       },
     ],
-    []
+    [],
   );
   const table = useMaterialReactTable({
     columns,
@@ -155,12 +147,7 @@ const ForApprovalPage = () => {
         backgroundColor: "var(--mui-palette-background-default)",
       },
     },
-    muiTableBodyRowProps: ({ row }) => ({
-      onClick: () => {
-        setSelectedRowData(row.original);
-      },
-      style: { cursor: "pointer" },
-    }),
+
     renderTopToolbar: ({ table }) => {
       return (
         <Box

@@ -182,74 +182,47 @@ const PermitDrawer = ({ permit }: { permit: PermitDataType }) => {
                           />
                         </Grid>
                       </Grid>
+
                       <Grid container spacing={1}>
                         <Grid size={"grow"}>
                           <Typography variant="subtitle1" className="text-xs text-gray-600">
-                            Landowner
+                            Type of forest product
                           </Typography>
-                          <Typography className="text-md font-medium">{permit.land_owner}</Typography>
+                          <Typography className="text-md font-medium">{permit.typeForestProduct}</Typography>
                         </Grid>
-                        <Grid size={"grow"}>
-                          <Typography variant="subtitle1" className="text-xs text-gray-600">
-                            Contact No.
-                          </Typography>
-                          <Typography className="text-md font-medium">{permit.contact_no}</Typography>
-                        </Grid>
-                      </Grid>
-                      <Grid container spacing={1}>
-                        <Grid size={"grow"}>
-                          <Typography variant="subtitle1" className="text-xs text-gray-600">
-                            Location
-                          </Typography>
-                          <Typography className="text-md font-medium">{permit.location}</Typography>
-                        </Grid>
-                        <Grid size={"grow"}>
-                          <Typography variant="subtitle1" className="text-xs text-gray-600">
-                            Area (sq.m)
-                          </Typography>
-                          <Typography className="text-md font-medium">{permit.area}</Typography>
-                        </Grid>
-                      </Grid>
-                      <Grid container spacing={1}>
                         <Grid size={"grow"}>
                           <Typography variant="subtitle1" className="text-xs text-gray-600">
                             Species
                           </Typography>
                           <Typography className="text-md font-medium">{permit.species}</Typography>
                         </Grid>
+                      </Grid>
+                      <Grid container spacing={1}>
                         <Grid size={"grow"}>
                           <Typography variant="subtitle1" className="text-xs text-gray-600">
-                            Total Volume
+                            Estimated volume/quantity
                           </Typography>
-                          <Typography className="text-md font-medium">{permit.total_volume}</Typography>
+                          <Typography className="text-md font-medium">{permit.estimatedVolumeQuantity}</Typography>
+                        </Grid>
+                        <Grid size={"grow"}>
+                          <Typography variant="subtitle1" className="text-xs text-gray-600">
+                            Type of conveyance and plate number
+                          </Typography>
+                          <Typography className="text-md font-medium">{permit.typeConveyancePlateNumber}</Typography>
                         </Grid>
                       </Grid>
                       <Grid container spacing={1}>
                         <Grid size={"grow"}>
                           <Typography variant="subtitle1" className="text-xs text-gray-600">
-                            Vehicle / Plate No.
+                            Name and address of the consignee/destination
                           </Typography>
-                          <Typography className="text-md font-medium">{permit.plate_no}</Typography>
+                          <Typography className="text-md font-medium">{permit.consignee}</Typography>
                         </Grid>
                         <Grid size={"grow"}>
                           <Typography variant="subtitle1" className="text-xs text-gray-600">
-                            Destination
+                            Date of transport
                           </Typography>
-                          <Typography className="text-md font-medium">{permit.destination}</Typography>
-                        </Grid>
-                      </Grid>
-                      <Grid container spacing={1}>
-                        <Grid size={"grow"}>
-                          <Typography variant="subtitle1" className="text-xs text-gray-600">
-                            Grand Total (cu.m)
-                          </Typography>
-                          <Typography className="text-md font-medium">{permit.grand_total}</Typography>
-                        </Grid>
-                        <Grid size={"grow"}>
-                          <Typography variant="subtitle1" className="text-xs text-gray-600">
-                            Remaining Balance
-                          </Typography>
-                          <Typography className="text-md font-medium">{permit.remaning_balance}</Typography>
+                          <Typography className="text-md font-medium">{permit.dateOfTransport}</Typography>
                         </Grid>
                       </Grid>
                       <Grid container spacing={1}>

@@ -3,14 +3,9 @@
 import { FC, ReactNode } from "react";
 
 import Description from "@mui/icons-material/Description";
-import Inventory2 from "@mui/icons-material/Inventory2";
-import LocalShipping from "@mui/icons-material/LocalShipping";
 import CalendarToday from "@mui/icons-material/CalendarToday";
-import Person from "@mui/icons-material/Person";
-import PhoneIcon from "@mui/icons-material/Phone";
+
 import LocationOn from "@mui/icons-material/LocationOn";
-import Park from "@mui/icons-material/Park";
-import AttachMoney from "@mui/icons-material/AttachMoney";
 
 import { PermitDataType } from "@/types/permit";
 import Avatar from "@mui/material/Avatar";
@@ -21,6 +16,8 @@ import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 import { Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
+import Box from "@mui/material/Box";
+import { Typography } from "@mui/material";
 L.Icon.Default.mergeOptions({
   iconUrl,
   iconRetinaUrl,
@@ -106,41 +103,27 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
           </div>
         </Section>
 
-        {/* Land Owner Information */}
-        <Section title="Land Owner Information">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            <InfoRow label="Land Owner" value={permit.land_owner} icon={Person} />
-            <InfoRow label="Contact Number" value={permit.contact_no} icon={PhoneIcon} />
-            <InfoRow label="Location" value={permit.location} icon={LocationOn} />
-            <InfoRow label="Area" value={permit.area} icon={LocationOn} />
-          </div>
-        </Section>
-
-        {/* Resource Details */}
-        <Section title="Resource Details">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            <InfoRow label="Species" value={permit.species} icon={Park} />
-            <InfoRow label="Total Volume" value={permit.total_volume} icon={Inventory2} />
-            <InfoRow label="Number of Truckloads" value={permit.noTruckloads} icon={LocalShipping} />
-          </div>
-        </Section>
-
-        {/* Transportation Details */}
-        <Section title="Transportation Details">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            <InfoRow label="Plate Number" value={permit.plate_no} icon={LocalShipping} />
-            <InfoRow label="Destination" value={permit.destination} icon={LocationOn} />
-          </div>
-        </Section>
-
-        {/* Financial Information */}
         <Section title="Financial Information">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            <InfoRow label="Grand Total" value={permit.grand_total} icon={AttachMoney} />
-            <InfoRow label="Remaining Balance" value={permit.remaning_balance} icon={AttachMoney} />
+            <InfoRow label="Type of forest product" value={permit.typeForestProduct} />
+            <InfoRow label="Species" value={permit.species} />
           </div>
         </Section>
-        {/* Location Coordinates */}
+
+        <Section title="Financial Information">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            <InfoRow label="Estimated volume/quantity" value={permit.estimatedVolumeQuantity} />
+            <InfoRow label="Type of conveyance and plate number" value={permit.typeConveyancePlateNumber} />
+          </div>
+        </Section>
+
+        <Section title="Financial Information">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            <InfoRow label="Name and address of the consignee/destination" value={permit.consignee} />
+            <InfoRow label="Date of Transport" value={permit.dateOfTransport} />
+          </div>
+        </Section>
+
         <Section title="Location Coordinates">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             <InfoRow label="Longitude" value={permit.lng} icon={LocationOn} />
@@ -161,15 +144,61 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
             </Marker>
           </MapContainer>
         </Section>
-        <Section title="Required Documents">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            <InfoRow label="Request Letter" value={permit.requestLetter} icon={Description} />
-            <InfoRow label="Barangay Certificate" value={permit.certificateBarangay} icon={Description} />
-            <InfoRow label="OR/CR" value={permit.orCr} icon={Description} />
-            <InfoRow label="Driver's License" value={permit.driverLicense} icon={Description} />
-            <InfoRow label="Other Documents" value={permit.otherDocuments} icon={Description} />
-          </div>
-        </Section>
+
+        <div className="flex flex-col mt-6">
+          <Typography variant="h6" className="mb-2">
+            Request Letter
+          </Typography>
+          <Box
+            component="iframe"
+            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/documents/${permit.requestLetter}#toolbar=0&navpanes=0&scrollbar=0`}
+            style={{ width: "100%", border: "none", height: "100vh" }}
+          />
+        </div>
+
+        <div className="flex flex-col mt-6">
+          <Typography variant="h6" className="mb-2">
+            Certificate of Barangay
+          </Typography>
+          <Box
+            component="iframe"
+            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/documents/${permit.certificateBarangay}#toolbar=0&navpanes=0&scrollbar=0`}
+            style={{ width: "100%", border: "none", height: "100vh" }}
+          />
+        </div>
+
+        <div className="flex flex-col mt-6">
+          <Typography variant="h6" className="mb-2">
+            Certificate of Barangay
+          </Typography>
+          <Box
+            component="iframe"
+            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/documents/${permit.certificateBarangay}#toolbar=0&navpanes=0&scrollbar=0`}
+            style={{ width: "100%", border: "none", height: "100vh" }}
+          />
+        </div>
+
+        <div className="flex flex-col mt-6">
+          <Typography variant="h6" className="mb-2">
+            Driver&apos;s License
+          </Typography>
+          <Box
+            component="iframe"
+            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/documents/${permit.driverLicense}#toolbar=0&navpanes=0&scrollbar=0`}
+            style={{ width: "100%", border: "none", height: "100vh" }}
+          />
+        </div>
+
+        <div className="flex flex-col mt-6">
+          <Typography variant="h6" className="mb-2">
+            Other Documents
+          </Typography>
+          <Box
+            component="iframe"
+            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/documents/${permit.otherDocuments}#toolbar=0&navpanes=0&scrollbar=0`}
+            style={{ width: "100%", border: "none", height: "100vh" }}
+          />
+        </div>
       </div>
     </div>
   );

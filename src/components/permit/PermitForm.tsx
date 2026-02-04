@@ -7,7 +7,7 @@ import TextField from "@mui/material/TextField";
 
 import { MapContainer } from "react-leaflet/MapContainer";
 import { Marker } from "react-leaflet/Marker";
-import { Popup } from "react-leaflet/Popup";
+
 import { useMapEvents } from "react-leaflet";
 
 import { TileLayer } from "react-leaflet/TileLayer";
@@ -21,14 +21,14 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { Box, Button, Card, CardHeader, CardMedia, FormHelperText, Typography } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 import Comments from "./Comments";
-import useAuth from "@/store/useAuth";
+
 L.Icon.Default.mergeOptions({
   iconUrl,
   iconRetinaUrl,
@@ -229,7 +229,6 @@ const FileUploadContent = () => {
 };
 
 const PermitForm = ({ action }: { action?: string }) => {
-  const userData = useAuth((state) => state.userData);
   const { control, getValues } = useFormContext<PermitSchemaType & { status: string }>();
   const [value, setVaueTabs] = useState(0);
 
@@ -275,26 +274,8 @@ const PermitForm = ({ action }: { action?: string }) => {
 
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel>Landowner</FormLabel>
-              <TextFieldForm name="land_owner" />
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormControl fullWidth>
-              <FormLabel>Contact No.</FormLabel>
-              <TextFieldForm name="contact_no" />
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormControl fullWidth>
-              <FormLabel>Location</FormLabel>
-              <TextFieldForm name="location" />
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormControl fullWidth>
-              <FormLabel>Area (sq.m)</FormLabel>
-              <TextFieldForm name="area" />
+              <FormLabel>Type of Forest Product </FormLabel>
+              <TextFieldForm name="typeForestProduct" />
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -305,38 +286,51 @@ const PermitForm = ({ action }: { action?: string }) => {
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel>Total Volume</FormLabel>
-              <TextFieldForm name="total_volume" />
+              <FormLabel>Estimated volume/quantity</FormLabel>
+              <TextFieldForm name="estimatedVolumeQuantity" />
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel>Vehicle / Plate No.</FormLabel>
-              <TextFieldForm name="plate_no" />
+              <FormLabel>Type of conveyance and plate number</FormLabel>
+              <TextFieldForm name="typeConveyancePlateNumber" />
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel>Destination</FormLabel>
-              <TextFieldForm name="destination" />
+              <FormLabel>Name and address of the consignee/destination</FormLabel>
+              <TextFieldForm name="consignee" />
             </FormControl>
           </Grid>
-          {userData?.role === "admin" && (
-            <>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl fullWidth>
-                  <FormLabel>Grand Total (cu.m)</FormLabel>
-                  <TextFieldForm name="grand_total" />
-                </FormControl>
-              </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl fullWidth>
-                  <FormLabel>Remaining Balance</FormLabel>
-                  <TextFieldForm name="remaning_balance" />
-                </FormControl>
-              </Grid>
-            </>
-          )}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FormControl fullWidth>
+              <FormLabel>Date of Transport</FormLabel>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Controller
+                  name="dateOfTransport"
+                  control={control}
+                  render={({ field: { value, onChange }, fieldState: { error } }) => {
+                    return (
+                      <DatePicker
+                        value={value ? dayjs(value) : null}
+                        onChange={(e) => {
+                          onChange(dayjs(e).format("MM/DD/YYYY"));
+                        }}
+                        format="MM/DD/YYYY"
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                            helperText: error?.message,
+                            error: !!error,
+                          },
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </LocalizationProvider>
+            </FormControl>
+          </Grid>
 
           {action === "edit" && (
             <Grid size={{ xs: 12, md: 6 }}>

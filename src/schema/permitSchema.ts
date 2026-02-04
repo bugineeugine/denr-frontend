@@ -2,17 +2,13 @@ import * as z from "zod";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "application/pdf"];
 export const permitSchema = z.object({
-  land_owner: z.string().nonempty({ error: "Landowner is required" }),
-  contact_no: z.string().nonempty({ error: "Contact No. is required" }),
-  location: z.string().nonempty({ error: "Location is required" }),
-  area: z.string().nonempty({ error: "Area  is required" }),
+  typeForestProduct: z.string().nonempty({ error: "Type of Forest Product is required" }),
+  estimatedVolumeQuantity: z.string().nonempty({ error: "Estimated volume/quantity" }),
+  typeConveyancePlateNumber: z.string().nonempty({ error: "Type of Conveyance / Plate Number is required" }),
+  consignee: z.string().nonempty({ error: "Consignee is required" }),
   species: z.string().nonempty({ error: "Species is required" }),
-  total_volume: z.string().nonempty({ error: "Total Volume is required" }),
-  plate_no: z.string().nonempty({ error: "Vehicle / Plate No. is required" }),
-  destination: z.string().nonempty({ error: "Destination is required" }),
+  dateOfTransport: z.string().nonempty({ error: "Date of Transport is required" }),
   expiry_date: z.string().nonempty({ error: "Expiry Date is required" }),
-  grand_total: z.string().optional().default("0"),
-  remaning_balance: z.string().optional().default("0"),
   issued_date: z.string().nonempty({ error: "Issued Date is required" }),
   lng: z.number(),
   lat: z.number(),

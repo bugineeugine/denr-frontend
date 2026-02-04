@@ -33,16 +33,13 @@ const DialogContentForm = (props: UseDisclosureType) => {
   const queryClient = useQueryClient();
   const methods = useForm({
     defaultValues: {
-      land_owner: "",
-      contact_no: "",
-      location: "",
-      area: "",
       species: "",
-      total_volume: "",
-      plate_no: "",
-      destination: "",
-      grand_total: "0",
-      remaning_balance: "0",
+      typeForestProduct: "",
+      estimatedVolumeQuantity: "",
+      typeConveyancePlateNumber: "",
+      consignee: "",
+      dateOfTransport: "",
+
       lng: 121.157227,
       lat: 16.629613,
       requestLetter: undefined,
@@ -80,15 +77,16 @@ const DialogContentForm = (props: UseDisclosureType) => {
   });
 
   const onSubmit = async (data: RequestCreateType) => {
+    console.log("Submitted Data:", data);
     await mutateAsync(data);
     onClose();
   };
-
+  console.log(methods.formState.errors);
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <DialogTitle component={"div"} className="m-0 flex items-center justify-between p-3" id="create-permit-dialog">
-          <Typography variant="h6">Add New Permit</Typography>
+          <Typography variant="h6">Add New Application</Typography>
           <IconButton
             disabled={isPending}
             onClick={onClose}

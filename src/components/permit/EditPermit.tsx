@@ -73,7 +73,7 @@ const DialogContentForm = (props: Props) => {
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <DialogTitle component={"div"} className="m-0 flex items-center justify-between p-3" id="edit-permit-dialog">
           <Box className="flex flex-col">
-            <Typography variant="h6">Edit Permit</Typography>
+            <Typography variant="h6">Edit Application</Typography>
             <Box className="flex items-center gap-1">
               <Typography variant="subtitle2">{permit_no}</Typography>
               <Chip
