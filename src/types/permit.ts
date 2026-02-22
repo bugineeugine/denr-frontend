@@ -23,6 +23,8 @@ export type PermitDataType = {
   species: string;
   expiry_date: string;
   issued_date: string;
+  landOwner: string;
+  contactNumber: string;
   lng: number;
   lat: number;
   status: string;

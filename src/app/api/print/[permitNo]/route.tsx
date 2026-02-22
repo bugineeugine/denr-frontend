@@ -20,10 +20,11 @@ const styles = StyleSheet.create({
     padding: 40,
     fontSize: 12,
   },
+
   title: {
     fontSize: 20,
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 5,
     fontWeight: "bold",
   },
   subtitle: {
@@ -47,7 +48,6 @@ const styles = StyleSheet.create({
     width: "60%",
   },
   qrContainer: {
-    marginTop: 30,
     alignItems: "center",
   },
   qr: {
@@ -63,6 +63,117 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     textAlign: "center",
     width: 100,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: 2,
+    borderBottomColor: "#c2410c",
+    paddingBottom: 8,
+  },
+
+  headerRight: {
+    alignItems: "center",
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  logo: {
+    width: 65,
+    height: 65,
+  },
+
+  qrSmall: {
+    width: 70,
+    height: 70,
+  },
+
+  headerTextContainer: {
+    marginLeft: 15,
+  },
+
+  headerLine: {
+    fontSize: 10,
+  },
+
+  statusSmall: {
+    marginTop: 4,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    fontSize: 8,
+    color: "#fff",
+    borderRadius: 4,
+    textAlign: "center",
+  },
+  headerBold: {
+    fontSize: 11,
+    fontWeight: "bold",
+  },
+
+  titleContainer: {
+    marginTop: 5,
+    alignItems: "center",
+  },
+  paragraph: {
+    marginTop: 5,
+    textAlign: "center",
+    fontSize: 10,
+  },
+
+  tableRow: {
+    flexDirection: "row",
+  },
+
+  tableLabel: {
+    width: "25%",
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    padding: 5,
+    fontWeight: "bold",
+  },
+
+  tableValue: {
+    width: "70%",
+    borderBottomWidth: 1,
+    padding: 5,
+  },
+
+  /* SIGNATURE */
+  signatureRow: {
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  signatureBox: {
+    width: "40%",
+    borderTopWidth: 1,
+    paddingTop: 5,
+    textAlign: "center",
+  },
+
+  footerText: {
+    marginTop: 10,
+    fontSize: 9,
+    textAlign: "center",
+  },
+
+  totals: {
+    marginTop: 5,
+    fontSize: 10,
+  },
+
+  /* WATERMARK */
+  watermark: {
+    position: "absolute",
+    top: "40%",
+    left: "20%",
+    fontSize: 80,
+    color: "rgba(128,0,128,0.2)",
+    transform: "rotate(-30deg)",
   },
 });
 const errorStyles = StyleSheet.create({
@@ -93,6 +204,8 @@ interface PermitProps {
     typeForestProduct: string;
     estimatedVolumeQuantity: string;
     typeConveyancePlateNumber: string;
+    landOwner: string;
+    contactNumber: string;
     consignee: string;
     species: string;
     dateOfTransport: string;
@@ -141,32 +254,76 @@ const SomethingWentWrongPdf = () => (
     </Page>
   </Document>
 );
+const TableRow = ({ label, value }: { label: string; value: string }) => (
+  <View style={styles.tableRow}>
+    <Text style={styles.tableLabel}>{label}</Text>
+    <Text style={styles.tableValue}>{value}</Text>
+  </View>
+);
 const PermitPdf = ({ data }: PermitProps) => {
   return (
     <Document>
-      <Page style={styles.page}>
-        <Text style={styles.title}>TRANSPORT PERMIT</Text>
-        <Text style={styles.subtitle}>Permit No: {data.permit_no}</Text>
+      <Page size="A4" orientation="landscape" style={styles.page}>
+        <View style={styles.headerContainer}>
+          <View style={styles.headerLeft}>
+            <Image style={styles.logo} src="http://localhost:3000/denr.png" />
+
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.headerBold}>Department of Environment and Natural Resources</Text>
+              <Text style={styles.headerLine}>REGION IV-A CALABARZON</Text>
+              <Text style={styles.headerLine}>Community Environment and Natural Resources Office</Text>
+              <Text style={styles.headerLine}>Brgy. Duhat, Sta. Cruz, Laguna</Text>
+              <Text style={styles.headerLine}>Tel.No.: (049) 536-3231 or 09668494254</Text>
+              <Text style={styles.headerLine}>Email: cenrostacruz@denr.gov.ph</Text>
+            </View>
+          </View>
+
+          <View style={styles.headerRight}>
+            <Image
+              style={styles.qrSmall}
+              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/qrcodes/${data.permit_no}.png`}
+            />
+            <Text style={[styles.statusSmall, getStatusStyle(data.status)]}>{data.status.toUpperCase()}</Text>
+          </View>
+        </View>
+
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>TRANSPORT CERTIFICATE</Text>
+          <Text style={styles.subtitle}>OF PLANTED TREES IN PRIVATE LANDS</Text>
+        </View>
+
+        <Text style={styles.paragraph}>
+          This is to certify that the logs and/or derivatives contained in this shipment are planted trees from Private
+          Forest Plantations.
+        </Text>
 
         <View style={styles.table}>
-          <Row label="Permit Type" value={data.permit_type} />
-          <Row label="Forest Product" value={data.typeForestProduct} />
-          <Row label="Species" value={data.species} />
-          <Row label="Estimated Volume" value={data.estimatedVolumeQuantity} />
-          <Row label="Conveyance / Plate No." value={data.typeConveyancePlateNumber} />
-          <Row label="Consignee / Destination" value={data.consignee} />
-          <Row label="Date of Transport" value={data.dateOfTransport} />
-          <Row label="Issued Date" value={data.issued_date} />
-          <Row label="Expiry Date" value={data.expiry_date} />
+          <TableRow label="Permit No." value={data.permit_no} />
+          <TableRow label="Landowner" value={data.landOwner} />
+          <TableRow label="Contact No." value={data.contactNumber} />
+          <TableRow label="Species" value={data.species} />
+          <TableRow label="Total Volume" value={data.estimatedVolumeQuantity} />
+          <TableRow label="Conveyance / Plate No." value={data.typeConveyancePlateNumber} />
+          <TableRow label="Consignee / Destination" value={data.consignee} />
+          <TableRow label="Date of Transport" value={data.dateOfTransport} />
+
+          <TableRow label="Issued Date" value={data.issued_date} />
+          <TableRow label="Expiry Date" value={data.expiry_date} />
         </View>
 
-        <View style={styles.qrContainer}>
-          <Image
-            style={styles.qr}
-            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/qrcodes/${data.permit_no}.png`}
-          />
-          <Text style={[styles.status, getStatusStyle(data.status)]}>{data.status.toUpperCase()}</Text>
+        {/* <View style={styles.totals}>
+          <Text>Grand Total: {data.estimatedVolumeQuantity}</Text>
+        </View> */}
+
+        <View style={styles.signatureRow}>
+          <Text style={styles.signatureBox}>AUTHORIZED SIGNATURE</Text>
+          <Text style={styles.signatureBox}>DATE CERTIFIED</Text>
         </View>
+
+        <Text style={styles.footerText}>
+          This certificate is issued pursuant to existing rules and regulations of the Department of Environment and
+          Natural Resources (DENR).
+        </Text>
       </Page>
     </Document>
   );

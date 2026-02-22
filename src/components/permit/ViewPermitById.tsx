@@ -124,6 +124,13 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
           </div>
         </Section>
 
+        <Section title="Financial Information">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            <InfoRow label="Land Owner" value={permit.landOwner} />
+            <InfoRow label="Contact Number" value={permit.contactNumber} />
+          </div>
+        </Section>
+
         <Section title="Location Coordinates">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             <InfoRow label="Longitude" value={permit.lng} icon={LocationOn} />

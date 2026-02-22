@@ -228,6 +228,20 @@ const PermitDrawer = ({ permit }: { permit: PermitDataType }) => {
                       <Grid container spacing={1}>
                         <Grid size={"grow"}>
                           <Typography variant="subtitle1" className="text-xs text-gray-600">
+                            Landow Owner
+                          </Typography>
+                          <Typography className="text-md font-medium">{permit.landOwner}</Typography>
+                        </Grid>
+                        <Grid size={"grow"}>
+                          <Typography variant="subtitle1" className="text-xs text-gray-600">
+                            Contact Number
+                          </Typography>
+                          <Typography className="text-md font-medium">{permit.contactNumber}</Typography>
+                        </Grid>
+                      </Grid>
+                      <Grid container spacing={1}>
+                        <Grid size={"grow"}>
+                          <Typography variant="subtitle1" className="text-xs text-gray-600">
                             Issued Date
                           </Typography>
                           <Typography className="text-md font-medium">{permit.issued_date}</Typography>

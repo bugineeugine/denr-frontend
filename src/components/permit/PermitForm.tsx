@@ -331,7 +331,18 @@ const PermitForm = ({ action }: { action?: string }) => {
               </LocalizationProvider>
             </FormControl>
           </Grid>
-
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FormControl fullWidth>
+              <FormLabel>Land Owner</FormLabel>
+              <TextFieldForm name="landOwner" />
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FormControl fullWidth>
+              <FormLabel>Contact Number</FormLabel>
+              <TextFieldForm name="contactNumber" />
+            </FormControl>
+          </Grid>
           {action === "edit" && (
             <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>

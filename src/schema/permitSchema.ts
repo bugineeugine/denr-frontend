@@ -8,6 +8,8 @@ export const permitSchema = z.object({
   consignee: z.string().nonempty({ error: "Consignee is required" }),
   species: z.string().nonempty({ error: "Species is required" }),
   dateOfTransport: z.string().nonempty({ error: "Date of Transport is required" }),
+  landOwner: z.string().nonempty({ error: "Land Owner is required" }),
+  contactNumber: z.string().nonempty({ error: "Contact Number is required" }),
   expiry_date: z.string().nonempty({ error: "Expiry Date is required" }),
   issued_date: z.string().nonempty({ error: "Issued Date is required" }),
   lng: z.number(),

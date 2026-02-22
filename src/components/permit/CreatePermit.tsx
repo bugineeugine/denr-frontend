@@ -39,7 +39,8 @@ const DialogContentForm = (props: UseDisclosureType) => {
       typeConveyancePlateNumber: "",
       consignee: "",
       dateOfTransport: "",
-
+      landOwner: "",
+      contactNumber: "",
       lng: 121.157227,
       lat: 16.629613,
       requestLetter: undefined,
@@ -81,7 +82,7 @@ const DialogContentForm = (props: UseDisclosureType) => {
     await mutateAsync(data);
     onClose();
   };
-  console.log(methods.formState.errors);
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
