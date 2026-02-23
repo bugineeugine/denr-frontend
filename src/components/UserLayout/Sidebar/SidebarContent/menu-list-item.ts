@@ -28,7 +28,7 @@ const menuListItem: MenuItemListType = [
   },
 
   {
-    label: "Approval",
+    label: "Request Applications",
     segment: "approval",
     icon: ApprovalOutlinedIcon,
     children: [
@@ -39,7 +39,7 @@ const menuListItem: MenuItemListType = [
         action: ["canViewForApproval"],
       },
       {
-        label: "History Approve",
+        label: "History Approved",
         href: "/history-approve",
         segment: "history-approve",
         action: ["canViewHistoryApprove"],
