@@ -62,7 +62,7 @@ const History = ({ permit }: { permit: PermitDataType }) => {
     },
   });
   const currentStep = data?.data.length ?? 0;
-
+  const sortedData = [...(data?.data ?? [])].sort((a, b) => new Date(a.steps).getTime() - new Date(b.steps).getTime());
   return (
     <Box className="h-full ">
       <Timeline
@@ -75,11 +75,14 @@ const History = ({ permit }: { permit: PermitDataType }) => {
         }}
       >
         {steps.map((label, index) => {
-          const findData = data?.data[index];
+          const findData = sortedData[index];
           const isCompleted = index < currentStep;
           const isCurrent = index === currentStep;
           const isLast = index === steps.length - 1;
-
+          const getStepEndTime = (index: number) => {
+            const nextStep = sortedData[index + 1];
+            return nextStep?.created_at;
+          };
           return (
             <TimelineItem key={index}>
               <TimelineSeparator>
@@ -145,9 +148,17 @@ const History = ({ permit }: { permit: PermitDataType }) => {
                     )}
 
                     {findData && (
-                      <Typography variant="caption" color="text.secondary">
-                        {dateFormatter(findData.created_at.toString(), "MMM DD, YYYY • hh:mm A")}
-                      </Typography>
+                      <Box className="flex flex-col gap-1">
+                        <Typography variant="caption" color="text.secondary">
+                          Start: {dateFormatter(findData.created_at.toString(), "MMM DD, YYYY • hh:mm A")}
+                        </Typography>
+
+                        {getStepEndTime(index) && (
+                          <Typography variant="caption" color="text.secondary">
+                            End: {dateFormatter(getStepEndTime(index)!.toString(), "MMM DD, YYYY • hh:mm A")}
+                          </Typography>
+                        )}
+                      </Box>
                     )}
                   </CardContent>
                 </Card>
