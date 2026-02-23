@@ -22,6 +22,7 @@ import { PermitDataType } from "@/types/permit";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import { AxiosError } from "axios";
+import { Chip } from "@mui/material";
 const steps = [
   `Receiving/Releasing Clerk CENRO/Implementing PENRO Records Unit `,
   `PENR/CENR Officer/ Deputy CENR Officer `,
@@ -52,7 +53,19 @@ export interface Datum {
   permit_no: string;
   status: string;
 }
+const formatDuration = (ms: number) => {
+  const totalSeconds = Math.floor(ms / 1000);
 
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (days > 0) return `${days}d ${hours}h`;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  if (minutes > 0) return `${minutes}m ${seconds}s`;
+  return `${seconds}s`;
+};
 const History = ({ permit }: { permit: PermitDataType }) => {
   const { data } = useQuery<HistorySteps, AxiosError<{ message: string }>>({
     queryKey: ["history-steps", { id: permit.id }],
@@ -63,8 +76,13 @@ const History = ({ permit }: { permit: PermitDataType }) => {
   });
   const currentStep = data?.data.length ?? 0;
   const sortedData = [...(data?.data ?? [])].sort((a, b) => new Date(a.steps).getTime() - new Date(b.steps).getTime());
+  const totalProcessingMs =
+    sortedData.length > 1
+      ? new Date(sortedData[sortedData.length - 1].created_at).getTime() - new Date(sortedData[0].created_at).getTime()
+      : 0;
   return (
     <Box className="h-full ">
+      <Chip color="default" label={`Total Processing Time: ${formatDuration(totalProcessingMs)}`} />
       <Timeline
         className="w-full max-w-[420px] px-2"
         sx={{
