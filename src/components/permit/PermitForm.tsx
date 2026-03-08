@@ -240,7 +240,7 @@ const PermitForm = ({ action }: { action?: string }) => {
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} variant="fullWidth" onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Bsic Information" {...a11yProps(0)} />
+          <Tab label="Basic Information" {...a11yProps(0)} />
 
           <Tab label="Upload File" {...a11yProps(1)} />
           {action === "edit" && <Tab label="Comments" {...a11yProps(2)} />}

@@ -51,7 +51,7 @@ const HistoryApprovePage = () => {
         },
       },
     ],
-    []
+    [],
   );
   const table = useMaterialReactTable({
     columns,
@@ -120,8 +120,8 @@ const HistoryApprovePage = () => {
   return (
     <Box className="m-2 space-y-2">
       <Box>
-        <Typography variant="h6">My Historical Appvove</Typography>
-        <Typography variant="body2">Citizen Charter Histry Approval Action By Me.</Typography>
+        <Typography variant="h6">History Approved</Typography>
+        <Typography variant="body2">Application Histry Approval Action By Me.</Typography>
       </Box>
       <MaterialReactTable table={table} />
     </Box>

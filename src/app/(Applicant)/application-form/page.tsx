@@ -93,7 +93,7 @@ const ApplicationForm = () => {
               <Chip
                 size="small"
                 variant="outlined"
-                label={steps === 9 ? "ROCESS COMPLETE" : "IN PROGRESS"}
+                label={steps === 9 ? "PROGRESS COMPLETE" : "IN PROGRESS"}
                 color={steps === 9 ? "success" : "secondary"}
               />
             </Box>
