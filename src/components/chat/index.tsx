@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import { Box, Fab, IconButton, TextField, Button, Typography, Paper } from "@mui/material";
 import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
 import CloseIcon from "@mui/icons-material/Close";
@@ -10,6 +11,9 @@ type Message = {
     text: string;
   }[];
 };
+
+const CHAT_STORAGE_KEY = "denr-chat-history";
+
 const LoadingDots = () => {
   return (
     <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
@@ -44,7 +48,6 @@ const LoadingDots = () => {
         }}
       />
 
-      {/* Keyframes */}
       <style>
         {`
           @keyframes bounce {
@@ -56,46 +59,71 @@ const LoadingDots = () => {
     </Box>
   );
 };
+
 const Chat = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-
   const [input, setInput] = useState("");
+
+  useEffect(() => {
+    const storedMessages = window.localStorage.getItem(CHAT_STORAGE_KEY);
+
+    if (!storedMessages) {
+      return;
+    }
+
+    try {
+      const parsedMessages = JSON.parse(storedMessages) as Message[];
+      setMessages(parsedMessages);
+    } catch (error) {
+      console.error("Failed to parse chat history.", error);
+      window.localStorage.removeItem(CHAT_STORAGE_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    const persistedMessages = messages.filter((message) => message.parts.some((part) => part.text.trim()));
+    window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(persistedMessages));
+  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
 
-    const userMsg: Message = { role: "user", parts: [{ text: input }] };
-    const newMessages = [...messages, userMsg];
-    setMessages(newMessages);
-    setInput("");
-
-    setLoading(true);
+    const userMsg: Message = { role: "user", parts: [{ text: input.trim() }] };
     const loadingMsg: Message = { role: "model", parts: [{ text: "" }] };
-    setMessages((prev) => [...prev, loadingMsg]);
+    const nextMessages = [...messages, userMsg];
+
+    setMessages([...nextMessages, loadingMsg]);
+    setInput("");
+    setLoading(true);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/prompt`, {
+      const res = await fetch("/api/prompt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: newMessages }),
+        body: JSON.stringify({ contents: nextMessages }),
       });
 
-      const data = await res.json();
-      const aiMsg: Message = { role: "model", parts: [{ text: data.answer }] };
+      const data = (await res.json()) as { answer?: string; error?: string };
 
-      setMessages((prev) => [...prev.slice(0, -1), aiMsg]);
-    } catch (err) {
-      console.error(err);
-      setMessages((prev) => [
-        ...prev.slice(0, -1),
+      if (!res.ok || !data.answer) {
+        throw new Error(data.error || "Could not get AI response.");
+      }
+
+      const aiMsg: Message = { role: "model", parts: [{ text: data.answer }] };
+      setMessages([...nextMessages, aiMsg]);
+    } catch (error) {
+      console.error(error);
+      setMessages([
+        ...nextMessages,
         { role: "model", parts: [{ text: "Error: Could not get AI response." }] },
       ]);
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <>
       <Fab color="primary" aria-label="chat" className="fixed bottom-5 right-5" onClick={() => setOpen(true)}>
@@ -114,7 +142,6 @@ const Chat = () => {
             overflow: "hidden",
           }}
         >
-          {/* Header */}
           <Box
             sx={{
               p: 1,
@@ -166,7 +193,7 @@ const Chat = () => {
               variant="outlined"
               placeholder="Type a message..."
               multiline
-              maxRows={6} // maximum height ng TextField
+              maxRows={6}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
