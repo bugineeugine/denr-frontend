@@ -22,7 +22,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { SyntheticEvent, useState } from "react";
-import { Box, Button, Card, CardHeader, CardMedia, FormHelperText, Typography } from "@mui/material";
+import { Box, Button, Card, CardHeader, CardMedia, FormHelperText, InputLabel, Typography } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -228,9 +228,13 @@ const FileUploadContent = () => {
   );
 };
 
+const timberSpecies = ["Lumber (tabla)", "Plywood", "Veneer", "Particle Board", "Logs"];
+const nonTimberSpecies = ["Rattan", "Bamboo", "Almaciga Resin", "Anahaw Palms", "Nipa"];
+
 const PermitForm = ({ action }: { action?: string }) => {
-  const { control, getValues } = useFormContext<PermitSchemaType & { status: string }>();
+  const { control, getValues, watch } = useFormContext<PermitSchemaType & { status: string }>();
   const [value, setVaueTabs] = useState(0);
+  const typeForestProduct = watch("typeForestProduct");
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setVaueTabs(newValue);
@@ -274,14 +278,41 @@ const PermitForm = ({ action }: { action?: string }) => {
 
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel>Type of Forest Product </FormLabel>
-              <TextFieldForm name="typeForestProduct" />
+              <InputLabel id="typeForestProduct-label">Type of Forest Product</InputLabel>
+              <Controller
+                name="typeForestProduct"
+                control={control}
+                render={({ field }) => (
+                  <Select {...field} labelId="typeForestProduct-label" label="Type of Forest Product">
+                    <MenuItem value=""></MenuItem>
+                    <MenuItem value="Timber">Timber</MenuItem>
+                    <MenuItem value="Non-Timber">Non-Timber</MenuItem>
+                  </Select>
+                )}
+              />
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel>Species</FormLabel>
-              <TextFieldForm name="species" />
+              <InputLabel id="species-label">Species</InputLabel>
+              <Controller
+                name="species"
+                control={control}
+                render={({ field, fieldState }) => {
+                  const options = typeForestProduct === "Timber" ? timberSpecies : typeForestProduct === "Non-Timber" ? nonTimberSpecies : [];
+                  return (
+                    <>
+                      <Select {...field} labelId="species-label" label="Species" disabled={!typeForestProduct}>
+                        <MenuItem value=""></MenuItem>
+                        {options.map((option) => (
+                          <MenuItem key={option} value={option}>{option}</MenuItem>
+                        ))}
+                      </Select>
+                      {fieldState.error && <FormHelperText error>{fieldState.error.message}</FormHelperText>}
+                    </>
+                  );
+                }}
+              />
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
