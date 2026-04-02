@@ -12,7 +12,6 @@ import {
   Divider,
 } from "@mui/material";
 import axiosInstance from "@/utils/axiosInstance";
-import useAuth from "@/store/useAuth";
 import { useFormContext } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -28,38 +27,44 @@ interface Comment {
   };
 }
 
-const Comments = () => {
+/* permitId prop is optional — when omitted, falls back to form context (EditPermit usage) */
+const Comments = ({ permitId: permitIdProp }: { permitId?: string }) => {
   const [newComment, setNewComment] = useState("");
-  const { getValues } = useFormContext();
   const listRef = useRef<HTMLUListElement>(null);
-  const userData = useAuth((state) => state.userData);
-  const pertmiId = getValues().id;
   const quereyClient = useQueryClient();
+
+  /* Get permit id — prop takes priority, then form context */
+  let pertmiId = permitIdProp ?? "";
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const ctx = useFormContext();
+    if (!pertmiId) pertmiId = ctx?.getValues()?.id ?? "";
+  } catch {
+    /* no form context — that's fine when used from PermitDrawer */
+  }
+
   const { data } = useQuery<Comment[]>({
     queryKey: ["comments", { pertmiId }],
     queryFn: async () => {
       const response = await axiosInstance.get(`/comments/${pertmiId}`);
       return response.data?.data;
     },
+    enabled: !!pertmiId,
   });
 
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
-    const comment = {
-      user_id: userData?.id as string,
+    await axiosInstance.post(`/comments/`, {
       permit_id: pertmiId,
       comment: newComment,
-    };
-
-    await axiosInstance.post(`/comments/`, comment);
+    });
     quereyClient.invalidateQueries({
       queryKey: ["comments", { pertmiId }],
     });
     setNewComment("");
   };
 
-  // Scroll to bottom whenever comments change
   useEffect(() => {
     if (listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
@@ -72,21 +77,13 @@ const Comments = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        height: "62vh", // adjust height as needed
-
+        height: "62vh",
         borderRadius: 1,
         overflow: "hidden",
       }}
     >
       {/* Comments List */}
-      <List
-        ref={listRef}
-        sx={{
-          flex: 1,
-          overflowY: "auto",
-          p: 2,
-        }}
-      >
+      <List ref={listRef} sx={{ flex: 1, overflowY: "auto", p: 2 }}>
         {data?.map((comment, index) => (
           <React.Fragment key={comment.id}>
             <ListItem alignItems="flex-start">
@@ -95,11 +92,7 @@ const Comments = () => {
               </ListItemAvatar>
               <ListItemText
                 primary={<Typography variant="subtitle2">{comment.user.email}</Typography>}
-                slotProps={{
-                  secondary: {
-                    component: "div",
-                  },
-                }}
+                slotProps={{ secondary: { component: "div" } }}
                 secondary={
                   <>
                     <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
@@ -116,14 +109,7 @@ const Comments = () => {
       </List>
 
       {/* Sticky Input */}
-      <Box
-        sx={{
-          borderTop: "1px solid divider",
-
-          position: "sticky",
-          bottom: 0,
-        }}
-      >
+      <Box sx={{ borderTop: "1px solid divider", position: "sticky", bottom: 0 }}>
         <TextField
           multiline
           minRows={3}

@@ -22,7 +22,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { SyntheticEvent, useState } from "react";
-import { Box, Button, Card, CardHeader, CardMedia, FormHelperText, InputLabel, Typography } from "@mui/material";
+import { Box, Card, CardHeader, CardMedia, FormHelperText, InputLabel, Typography } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -142,7 +142,7 @@ const DisplayFileContent = () => {
   } as const;
   const [value, setValue] = useState<DocumentKey>("one");
 
-  const handleChange = (event: SyntheticEvent, newValue: DocumentKey) => {
+  const handleChange = (_event: SyntheticEvent, newValue: DocumentKey) => {
     setValue(newValue);
   };
 
@@ -183,7 +183,7 @@ const FileUploadContent = () => {
   ] as const;
 
   return (
-    <Grid container spacing={2} className="p-4">
+    <Grid container spacing={2} sx={{ p: 3 }}>
       {uploadFields.map(({ name, label, required }) => {
         const file = watch(name);
 
@@ -194,12 +194,72 @@ const FileUploadContent = () => {
               control={control}
               render={({ field: { onChange }, fieldState }) => (
                 <Box>
-                  <Typography variant="body2" fontWeight={600}>
-                    {label} {required && "*"}
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 700, fontSize: "0.78rem", color: "#374151", mb: 0.75 }}
+                  >
+                    {label}{" "}
+                    {required && <span style={{ color: "#ef4444" }}>*</span>}
                   </Typography>
 
-                  <Button variant="outlined" component="label" fullWidth sx={{ mt: 1 }} startIcon={<UploadFileIcon />}>
-                    Choose File
+                  <label
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      padding: "10px 14px",
+                      borderRadius: 12,
+                      border: fieldState.error
+                        ? "1.5px dashed #f87171"
+                        : file
+                          ? "1.5px solid #bbf7d0"
+                          : "1.5px dashed #d1d5db",
+                      background: file ? "#f0fdf4" : "#fafafa",
+                      cursor: "pointer",
+                      transition: "all 0.15s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!file) (e.currentTarget as HTMLElement).style.borderColor = "#166534";
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!file) (e.currentTarget as HTMLElement).style.borderColor = "#d1d5db";
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: 8,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: file ? "#dcfce7" : "#f3f4f6",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <UploadFileIcon sx={{ fontSize: 18, color: file ? "#166534" : "#9ca3af" }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      {file ? (
+                        <>
+                          <p style={{ fontSize: "0.78rem", fontWeight: 700, color: "#166534", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {file.name}
+                          </p>
+                          <p style={{ fontSize: "0.7rem", color: "#6b7280", margin: 0 }}>
+                            {(file.size / 1024).toFixed(1)} KB — click to replace
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p style={{ fontSize: "0.78rem", fontWeight: 600, color: "#374151", margin: 0 }}>
+                            Click to upload
+                          </p>
+                          <p style={{ fontSize: "0.7rem", color: "#9ca3af", margin: 0 }}>
+                            PDF, JPG, PNG, GIF accepted
+                          </p>
+                        </>
+                      )}
+                    </div>
                     <input
                       type="file"
                       hidden
@@ -209,15 +269,13 @@ const FileUploadContent = () => {
                         onChange(selectedFile);
                       }}
                     />
-                  </Button>
+                  </label>
 
-                  {file && (
-                    <Typography sx={{ mt: 1 }} variant="caption">
-                      📄 {file.name}
-                    </Typography>
+                  {fieldState.error && (
+                    <FormHelperText error sx={{ mx: 1, mt: 0.5 }}>
+                      {fieldState.error.message}
+                    </FormHelperText>
                   )}
-
-                  {fieldState.error && <FormHelperText error>{fieldState.error.message}</FormHelperText>}
                 </Box>
               )}
             />
@@ -236,22 +294,49 @@ const PermitForm = ({ action }: { action?: string }) => {
   const [value, setVaueTabs] = useState(0);
   const typeForestProduct = watch("typeForestProduct");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setVaueTabs(newValue);
   };
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} variant="fullWidth" onChange={handleChange} aria-label="basic tabs example">
+      <Box
+        sx={{
+          borderBottom: "1.5px solid #e5e7eb",
+          background: "#fff",
+          px: 2,
+          pt: 1,
+        }}
+      >
+        <Tabs
+          value={value}
+          variant="fullWidth"
+          onChange={handleChange}
+          aria-label="permit form tabs"
+          sx={{
+            minHeight: 44,
+            "& .MuiTab-root": {
+              minHeight: 44,
+              textTransform: "none",
+              fontSize: "0.82rem",
+              fontWeight: 600,
+              color: "#94a3b8",
+              "&.Mui-selected": { color: "#166534", fontWeight: 700 },
+            },
+            "& .MuiTabs-indicator": {
+              background: "linear-gradient(90deg, #14532d, #15803d)",
+              height: 2.5,
+              borderRadius: "2px 2px 0 0",
+            },
+          }}
+        >
           <Tab label="Basic Information" {...a11yProps(0)} />
-
-          <Tab label="Upload File" {...a11yProps(1)} />
+          <Tab label="Upload Documents" {...a11yProps(1)} />
           {action === "edit" && <Tab label="Comments" {...a11yProps(2)} />}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <Grid container spacing={1} className="p-4">
+        <Grid container spacing={2} sx={{ p: 3 }}>
           {getValues("status") && (
             <Grid size={12}>
               <FormControl fullWidth>
@@ -317,7 +402,7 @@ const PermitForm = ({ action }: { action?: string }) => {
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel>Estimated volume/quantity</FormLabel>
+              <FormLabel sx={{ fontSize: "0.78rem", fontWeight: 700, color: "#374151", mb: 0.5 }}>Estimated volume/quantity</FormLabel>
               <TextFieldForm name="estimatedVolumeQuantity" />
             </FormControl>
           </Grid>
@@ -371,7 +456,22 @@ const PermitForm = ({ action }: { action?: string }) => {
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
               <FormLabel>Contact Number</FormLabel>
-              <TextFieldForm name="contactNumber" />
+              <Controller
+                control={control}
+                name="contactNumber"
+                render={({ field: { value, onChange }, fieldState }) => (
+                  <TextField
+                    value={value}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                      onChange(digits);
+                    }}
+                    inputMode="numeric"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message ?? `${(value as string)?.length ?? 0}/11 digits`}
+                  />
+                )}
+              />
             </FormControl>
           </Grid>
           {action === "edit" && (

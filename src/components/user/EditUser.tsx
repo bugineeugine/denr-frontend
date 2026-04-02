@@ -1,34 +1,24 @@
-import Button from "@mui/material/Button";
-
 import Dialog from "@mui/material/Dialog";
 import Grow from "@mui/material/Grow";
-import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import DialogContent from "@mui/material/DialogContent";
-import Typography from "@mui/material/Typography";
-import DialogActions from "@mui/material/DialogActions";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import { useDisclosure, UseDisclosureType } from "@/hooks/useDisclosure";
 import { FormProvider, useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateUserSchema } from "@/schema/userSchema";
-
 import { RequestUpdateUserType, ResponseCreateUserType, UserDataType } from "@/types/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import { customToast } from "@/utils/customToast";
 import { AxiosError } from "axios";
 import UserForm from "./UserForm";
+import { UserDialogHeader, UserDialogFooter, dialogPaperSx } from "./CreateUser";
 
-type Props = {
-  user: UserDataType;
-} & UseDisclosureType;
+type Props = { user: UserDataType } & UseDisclosureType;
 
 const DialogContentForm = (props: Props) => {
   const { onClose, user } = props;
-  console.log({ user });
   const queryClient = useQueryClient();
   const methods = useForm({
     defaultValues: {
@@ -52,54 +42,37 @@ const DialogContentForm = (props: Props) => {
       return response.data;
     },
     onSuccess: (response) => {
-      queryClient.invalidateQueries({
-        queryKey: ["user-lists"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["user-lists"] });
       customToast(response.message);
     },
     onError: (error) => {
       customToast(error.response?.data.message || error.message, "error");
     },
   });
+
   const onSubmit = async (data: RequestUpdateUserType) => {
     const { password, ...rest } = data;
-
     const payload = password ? { ...rest, password } : rest;
-
     await mutateAsync(payload);
     onClose();
   };
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <DialogTitle component={"div"} className="m-0 flex items-center justify-between p-3" id="create-user-dialog">
-          <Typography variant="h6">Edit User</Typography>
-          <IconButton
-            disabled={isPending}
-            onClick={onClose}
-            size="small"
-            aria-label="close"
-            sx={(theme) => ({
-              color: theme.palette.grey[500],
-            })}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-
-        <DialogContent dividers className="py-2 space-y-2">
+      <form
+        onSubmit={methods.handleSubmit(onSubmit)}
+        style={{ display: "flex", flexDirection: "column", minHeight: 0, flex: 1 }}
+      >
+        <UserDialogHeader
+          title="Edit User"
+          subtitle={`Updating account for ${user.name}`}
+          onClose={onClose}
+          isPending={isPending}
+        />
+        <DialogContent sx={{ p: 2.5, flex: "1 1 0", minHeight: 0, overflow: "auto", background: "#f8fafc" }}>
           <UserForm />
         </DialogContent>
-
-        <DialogActions>
-          <Button onClick={onClose} loading={isPending} variant="outlined" color="info">
-            Cancel
-          </Button>
-          <Button loading={isPending} type="submit" variant="contained">
-            Save Changes
-          </Button>
-        </DialogActions>
+        <UserDialogFooter onClose={onClose} isPending={isPending} submitLabel="Save Changes" />
       </form>
     </FormProvider>
   );
@@ -109,16 +82,24 @@ const EditUser = ({ user }: { user: UserDataType }) => {
   const disclosure = useDisclosure();
   return (
     <>
-      <IconButton onClick={disclosure.onOpen} size="small" color="info">
-        <DriveFileRenameOutlineOutlinedIcon />
+      <IconButton
+        onClick={disclosure.onOpen}
+        size="small"
+        sx={{
+          color: "#0369a1",
+          borderRadius: "8px",
+          "&:hover": { background: "#e0f2fe" },
+        }}
+      >
+        <DriveFileRenameOutlineOutlinedIcon sx={{ fontSize: 18 }} />
       </IconButton>
       <Dialog
         open={disclosure.isOpen}
         slots={{ transition: Grow }}
-        aria-labelledby="create-user-dialog"
-        aria-describedby="create-user"
+        aria-labelledby="edit-user-dialog"
         fullWidth
         maxWidth="sm"
+        slotProps={{ paper: { sx: dialogPaperSx } }}
       >
         <DialogContentForm {...disclosure} user={user} />
       </Dialog>

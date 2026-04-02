@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderBottomWidth: 2,
     borderBottomColor: "#c2410c",
-    paddingBottom: 8,
+    paddingBottom: 2,
   },
 
   headerRight: {
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
 
   /* SIGNATURE */
   signatureRow: {
-    marginTop: 20,
+    marginTop: 15,
     flexDirection: "row",
     justifyContent: "space-between",
   },
@@ -301,6 +301,7 @@ const PermitPdf = ({ data }: PermitProps) => {
           <TableRow label="Permit No." value={data.permit_no} />
           <TableRow label="Landowner" value={data.landOwner} />
           <TableRow label="Contact No." value={data.contactNumber} />
+          <TableRow label="Type of Forest" value={data.typeForestProduct} />
           <TableRow label="Species" value={data.species} />
           <TableRow label="Total Volume" value={data.estimatedVolumeQuantity} />
           <TableRow label="Conveyance / Plate No." value={data.typeConveyancePlateNumber} />
