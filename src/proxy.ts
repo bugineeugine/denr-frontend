@@ -13,6 +13,7 @@ export async function proxy(request: NextRequest) {
   const searchParams = new URLSearchParams(search);
   const responseNext = NextResponse.next();
   const returnUrl = searchParams.get("returnUrl");
+  const setFetchMode = request.headers.get("sec-fetch-mode");
   if (!token) {
     if (pathname === "/" || pathname.startsWith("/login")) {
       return responseNext;
@@ -34,18 +35,20 @@ export async function proxy(request: NextRequest) {
       return NextResponse.rewrite(new URL("/404", request.url));
     }
 
-    const response = await axiosInstance.get("/auth/user-data", {
-      headers: {
-        Cookie: cookie.toString(),
-      },
-    });
-    const user = response.data.user;
+    if (setFetchMode === "navigate") {
+      const response = await axiosInstance.get("/auth/user-data", {
+        headers: {
+          Cookie: cookie.toString(),
+        },
+      });
+      const user = response.data.user;
 
-    if (matchedAdmin) {
-      const permissions = user.permissions;
-      const allowed = hasPermissionMiddleware([...permissions, "viewPermit", "404"], adminRoutes[matchedAdmin]);
-      if (!allowed) {
-        return NextResponse.rewrite(new URL("/404", request.url));
+      if (matchedAdmin) {
+        const permissions = user.permissions;
+        const allowed = hasPermissionMiddleware([...permissions, "viewPermit", "404"], adminRoutes[matchedAdmin]);
+        if (!allowed) {
+          return NextResponse.rewrite(new URL("/404", request.url));
+        }
       }
     }
 
