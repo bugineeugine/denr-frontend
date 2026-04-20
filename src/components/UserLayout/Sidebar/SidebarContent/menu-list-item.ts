@@ -4,6 +4,7 @@ import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import DocumentScannerOutlinedIcon from "@mui/icons-material/DocumentScannerOutlined";
 import ApprovalOutlinedIcon from "@mui/icons-material/ApprovalOutlined";
+import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
 
 const menuListItem: MenuItemListType = [
   {
@@ -27,6 +28,12 @@ const menuListItem: MenuItemListType = [
     action: ["canViewPermits"],
   },
 
+  {
+    label: "Violations",
+    icon: ReportProblemOutlinedIcon,
+    href: "/violations",
+    segment: "violations",
+  },
   {
     label: "Request Applications",
     segment: "approval",

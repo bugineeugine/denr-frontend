@@ -2,6 +2,7 @@ import Account from "./Account";
 import Hamburger from "./Hamburger";
 import Image from "next/image";
 import LiveDateTime from "./LiveDateTime";
+import NotificationBell from "./NotificationBell";
 
 const AppBarContent = ({ showBurger = false }: { showBurger?: boolean }) => {
   return (
@@ -44,6 +45,8 @@ const AppBarContent = ({ showBurger = false }: { showBurger?: boolean }) => {
 
       {/* ── Account ───────────────────────────────────────────── */}
       <LiveDateTime />
+
+      <NotificationBell />
 
       <Account />
     </>

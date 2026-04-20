@@ -1,12 +1,13 @@
 import AnnualyPermit from "@/components/dashboard/AnnualyPermit";
-import PermitMap from "@/components/dashboard/PermitMap";
 import PermitStatus from "@/components/dashboard/PermitStatus";
 import StatCards from "@/components/dashboard/StatCards";
 import RecentApplications from "@/components/dashboard/RecentApplications";
+import ViolationStatCards from "@/components/dashboard/ViolationStatCards";
+import DssPanel from "@/components/dashboard/DssPanel";
 import { DashboardDatatype } from "@/types/dashboard";
 import axiosInstance from "@/utils/axiosInstance";
 import { cookies } from "next/headers";
-import "leaflet/dist/leaflet.css";
+import PermitMap from "@/components/dashboard/PermitMapLazy";
 
 const DashboardPage = async () => {
   const cookieStore = await cookies();
@@ -58,15 +59,21 @@ const DashboardPage = async () => {
         {/* ── Stat cards ───────────────────────────────────────────── */}
         <StatCards permits={permits} />
 
+        {/* ── Compliance metrics ───────────────────────────────────── */}
+        <ViolationStatCards permits={permits} />
+
+        {/* ── Decision Support ─────────────────────────────────────── */}
+        <DssPanel permits={permits} />
+
         {/* ── Annual chart ─────────────────────────────────────────── */}
         <AnnualyPermit permitByYear={permits.permitsByYear} />
 
         {/* ── Recent + Status ──────────────────────────────────────── */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-12">
-          <div className="md:col-span-7">
+          <div className="md:col-span-7 order-2 md:order-1">
             <RecentApplications permits={permits.latestPermits} />
           </div>
-          <div className="md:col-span-5">
+          <div className="md:col-span-5 order-1 md:order-2">
             <PermitStatus permitsByStatus={permits.permitsByStatus} />
           </div>
         </div>

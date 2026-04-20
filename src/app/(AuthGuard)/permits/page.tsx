@@ -18,6 +18,7 @@ import DeletePermit from "@/components/permit/DeletePermit";
 import HasPermissionsClient from "@/components/HasPermissionsClient";
 import PermitDrawer from "@/components/permit/PermitDrawer";
 import PrintPermit from "@/components/permit/PrintPermit";
+import RenewPermit from "@/components/permit/RenewPermit";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import ForestOutlinedIcon from "@mui/icons-material/ForestOutlined";
@@ -204,6 +205,9 @@ const PermitsPage = () => {
               <PermitDrawer permit={permit} />
               <EditPermit permit={permit} />
               {permit.status === "Approved" && <PrintPermit permit={permit} />}
+              {(permit.status === "Expired" || permit.status === "Approved") && (
+                <RenewPermit permit={permit} />
+              )}
               <HasPermissionsClient action={["canDeletePermit"]}>
                 <DeletePermit permit={permit} />
               </HasPermissionsClient>

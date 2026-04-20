@@ -23,6 +23,7 @@ export const adminRoutes: Record<string, string[]> = {
   "/citizen": ["canViewCitizen"],
   "/approval/for-approval": ["canViewForApproval"],
   "/approval/history-approve": ["canViewHistoryApprove"],
+  "/violations": ["canViewPermits"],
 };
 
 export const hasPermissionMiddleware = (userPermissions: string[], requiredPermissions: string[]): boolean => {
