@@ -7,10 +7,14 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import DoneAllOutlinedIcon from "@mui/icons-material/DoneAllOutlined";
+import CloseIcon from "@mui/icons-material/Close";
+import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import axiosInstance from "@/utils/axiosInstance";
 import { NotificationListResponse, AppNotificationType } from "@/types/notification";
 
@@ -19,6 +23,13 @@ const SEVERITY_DOT: Record<string, string> = {
   success: "#16a34a",
   warning: "#d97706",
   critical: "#dc2626",
+};
+
+const SEVERITY_BG: Record<string, { bg: string; color: string; label: string }> = {
+  info: { bg: "#e0f2fe", color: "#0369a1", label: "Info" },
+  success: { bg: "#dcfce7", color: "#14532d", label: "Success" },
+  warning: { bg: "#fef3c7", color: "#92400e", label: "Warning" },
+  critical: { bg: "#fee2e2", color: "#991b1b", label: "Critical" },
 };
 
 const formatRelative = (iso: string) => {
@@ -34,8 +45,8 @@ const formatRelative = (iso: string) => {
 
 const NotificationBell = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selected, setSelected] = useState<AppNotificationType | null>(null);
   const open = Boolean(anchorEl);
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data } = useQuery<NotificationListResponse>({
@@ -63,17 +74,13 @@ const NotificationBell = () => {
 
   const handleClick = (n: AppNotificationType) => {
     if (!n.read_at) markRead.mutate(n.id);
-    if (n.link) router.push(n.link);
+    setSelected(n);
     setAnchorEl(null);
   };
 
   return (
     <>
-      <IconButton
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-        sx={{ color: "#fff", mr: 1 }}
-        aria-label="notifications"
-      >
+      <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ mr: 1 }} aria-label="notifications">
         <Badge
           badgeContent={unread}
           color="error"
@@ -116,9 +123,7 @@ const NotificationBell = () => {
         </div>
 
         {notifications.length === 0 && (
-          <div className="px-4 py-10 text-center text-[12px] text-slate-400">
-            No notifications yet
-          </div>
+          <div className="px-4 py-10 text-center text-[12px] text-slate-400">No notifications yet</div>
         )}
 
         {notifications.map((n, i) => (
@@ -148,6 +153,94 @@ const NotificationBell = () => {
           </div>
         ))}
       </Menu>
+
+      {/* ── Detail Dialog ────────────────────────────────────────── */}
+      <Dialog
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        maxWidth="sm"
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: {
+              overflow: "hidden",
+              borderRadius: "16px",
+              border: "1.5px solid #e5e7eb",
+              boxShadow: "0 24px 64px rgba(15,23,42,0.18)",
+            },
+          },
+        }}
+      >
+        {selected && (
+          <>
+            <div
+              className="relative px-5 py-4"
+              style={{
+                background:
+                  SEVERITY_BG[selected.severity]?.bg ?? "#f1f5f9",
+                borderBottom: "1.5px solid #e5e7eb",
+              }}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span
+                    className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                    style={{ background: SEVERITY_DOT[selected.severity] ?? "#94a3b8" }}
+                  />
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-[0.18em] rounded-full px-2 py-0.5"
+                    style={{
+                      background: "#fff",
+                      color: SEVERITY_BG[selected.severity]?.color ?? "#475569",
+                    }}
+                  >
+                    {SEVERITY_BG[selected.severity]?.label ?? selected.severity}
+                  </span>
+                  <span className="text-[10px] font-semibold text-slate-500 truncate">
+                    {selected.type}
+                  </span>
+                </div>
+                <IconButton
+                  size="small"
+                  onClick={() => setSelected(null)}
+                  sx={{
+                    color: "#64748b",
+                    "&:hover": { background: "rgba(15,23,42,0.06)" },
+                  }}
+                >
+                  <CloseIcon sx={{ fontSize: 18 }} />
+                </IconButton>
+              </div>
+            </div>
+
+            <DialogContent sx={{ px: 3, py: 3, background: "#fff" }}>
+              <h3 className="text-[16px] font-bold text-slate-800 leading-snug mb-2">
+                {selected.title}
+              </h3>
+              <p className="text-[13px] text-slate-600 leading-relaxed whitespace-pre-wrap">
+                {selected.message}
+              </p>
+              <div className="mt-4 flex items-center gap-1.5 text-[11px] text-slate-400">
+                <AccessTimeRoundedIcon sx={{ fontSize: 13 }} />
+                <span>{new Date(selected.created_at).toLocaleString()}</span>
+                <span className="text-slate-300">·</span>
+                <span>{formatRelative(selected.created_at)}</span>
+              </div>
+            </DialogContent>
+
+            <DialogActions
+              sx={{ px: 3, py: 2, background: "#f8fafc", borderTop: "1.5px solid #e5e7eb" }}
+            >
+              <Button
+                onClick={() => setSelected(null)}
+                sx={{ textTransform: "none", color: "#64748b" }}
+              >
+                Close
+              </Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
     </>
   );
 };

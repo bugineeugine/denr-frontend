@@ -14,6 +14,8 @@ import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import CreateViolation from "@/components/violation/CreateViolation";
 import DeleteViolation from "@/components/violation/DeleteViolation";
+import ViewViolation from "@/components/violation/ViewViolation";
+import EditViolation from "@/components/violation/EditViolation";
 
 const SEVERITY_STYLE: Record<string, { color: string; bg: string }> = {
   Low: { color: "#0369a1", bg: "#e0f2fe" },
@@ -106,17 +108,32 @@ const ViolationsPage = () => {
       accessorKey: "permit",
       header: "Linked Permit",
       enableColumnFilter: false,
-      Cell: ({ row }) => (
-        <span className="text-[12px] text-slate-600">
-          {row.original.permit?.permit_no || "—"}
-        </span>
-      ),
+      Cell: ({ row }) => {
+        const p = row.original.permit;
+        if (!p) return <span className="text-[12px] text-slate-400">—</span>;
+        return (
+          <a
+            href={`/permit/${p.permit_no}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[12px] font-semibold text-emerald-700 hover:underline"
+          >
+            {p.permit_no}
+          </a>
+        );
+      },
     },
     {
       id: "action",
       header: "",
-      size: 80,
-      Cell: ({ row }) => <DeleteViolation violation={row.original} />,
+      size: 140,
+      Cell: ({ row }) => (
+        <div className="flex items-center gap-0.5">
+          <ViewViolation violation={row.original} />
+          <EditViolation violation={row.original} />
+          <DeleteViolation violation={row.original} />
+        </div>
+      ),
     },
   ], []);
 

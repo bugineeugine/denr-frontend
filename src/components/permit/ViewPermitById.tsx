@@ -18,8 +18,11 @@ import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import { useRouter } from "next/navigation";
 
 import { PermitDataType } from "@/types/permit";
+import ReportViolation from "./ReportViolation";
 import axiosInstance from "@/utils/axiosInstance";
 import "leaflet/dist/leaflet.css";
 import { MapContainer } from "react-leaflet/MapContainer";
@@ -135,6 +138,7 @@ const getInitials = (name: string) =>
 
 /* ── main component ──────────────────────────────────────────────────── */
 export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
+  const router = useRouter();
   const [docTab, setDocTab] = useState(0);
   const statusMeta = getStatus(permit.status ?? "");
   const isExpired = permit.status?.toLowerCase() === "expired";
@@ -156,6 +160,7 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
       .then((r) => setComments(r.data?.data ?? []))
       .catch(() => {});
   }, [permit.id]);
+
 
   /* scroll comments to bottom when new ones arrive */
   useEffect(() => {
@@ -207,6 +212,20 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
   return (
     <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
       <div className="mx-auto max-w-4xl px-4 py-6 md:px-6">
+
+        {/* ── Back to dashboard ──────────────────────────────────────── */}
+        <button
+          onClick={() => router.push("/dashboard")}
+          className="mb-4 inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-[12px] font-bold text-emerald-800 transition-all hover:gap-3"
+          style={{
+            background: "#fff",
+            border: "1.5px solid #d1fae5",
+            boxShadow: "0 1px 4px rgba(20,83,45,0.06)",
+          }}
+        >
+          <ArrowBackRoundedIcon sx={{ fontSize: 16 }} />
+          Back to Dashboard
+        </button>
 
         {/* ── Expired alert banner ───────────────────────────────────── */}
         {isExpired && (
@@ -405,6 +424,9 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
               style={{ width: "100%", border: "none", height: "70vh", display: "block" }}
             />
           </div>
+
+          {/* ── Violation Reporting ──────────────────────────────────── */}
+          <ReportViolation permit={permit} />
 
           {/* ── Validator Comments ───────────────────────────────────── */}
           <div
