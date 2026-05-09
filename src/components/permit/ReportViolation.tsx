@@ -15,13 +15,10 @@ import { customToast } from "@/utils/customToast";
 import { ViolationDataType } from "@/types/violation";
 import { PermitDataType } from "@/types/permit";
 
-const SEVERITIES = ["Low", "Medium", "High", "Critical"];
 const TYPES = [
   "Illegal Logging",
   "Transport Without Permit",
   "Expired Permit Use",
-  "Over-Quota Harvest",
-  "Restricted Species",
   "Document Falsification",
   "Other",
 ];
@@ -31,15 +28,15 @@ const emptyForm = {
   contact_number: "",
   location: "",
   violation_type: "Illegal Logging",
-  severity: "Low",
+  severity: "Medium",
   description: "",
 };
 
-const SEV_STYLE: Record<string, { color: string; bg: string }> = {
-  Low: { color: "#0369a1", bg: "#e0f2fe" },
-  Medium: { color: "#92400e", bg: "#fef3c7" },
-  High: { color: "#9a3412", bg: "#ffedd5" },
-  Critical: { color: "#991b1b", bg: "#fee2e2" },
+const STATUS_STYLE: Record<string, { color: string; bg: string }> = {
+  Open: { color: "#991b1b", bg: "#fee2e2" },
+  Investigating: { color: "#92400e", bg: "#fef3c7" },
+  Resolved: { color: "#14532d", bg: "#dcfce7" },
+  Dismissed: { color: "#475569", bg: "#f1f5f9" },
 };
 
 const ReportViolation = ({ permit }: { permit: PermitDataType }) => {
@@ -130,7 +127,7 @@ const ReportViolation = ({ permit }: { permit: PermitDataType }) => {
         ) : (
           <div className="flex flex-col gap-2.5">
             {violations.map((v) => {
-              const sev = SEV_STYLE[v.severity] ?? { color: "#374151", bg: "#f3f4f6" };
+              const stat = STATUS_STYLE[v.status] ?? { color: "#374151", bg: "#f3f4f6" };
               return (
                 <div
                   key={v.id}
@@ -147,14 +144,14 @@ const ReportViolation = ({ permit }: { permit: PermitDataType }) => {
                     </div>
                     <span
                       className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                      style={{ background: sev.bg, color: sev.color }}
+                      style={{ background: stat.bg, color: stat.color }}
                     >
-                      {v.severity}
+                      {v.status}
                     </span>
                   </div>
                   <p className="text-[12px] text-slate-600 leading-relaxed">{v.description}</p>
                   <p className="mt-1.5 text-[10px] text-slate-400">
-                    {new Date(v.date_recorded).toLocaleDateString()} · status: {v.status}
+                    {new Date(v.date_recorded).toLocaleDateString()}
                   </p>
                 </div>
               );
@@ -198,25 +195,11 @@ const ReportViolation = ({ permit }: { permit: PermitDataType }) => {
             </TextField>
             <TextField
               size="small"
-              select
-              label="Severity *"
-              value={form.severity}
-              onChange={update("severity")}
+              label="Location / Barangay"
+              value={form.location}
+              onChange={update("location")}
               fullWidth
-            >
-              {SEVERITIES.map((s) => (
-                <MenuItem key={s} value={s}>{s}</MenuItem>
-              ))}
-            </TextField>
-            <div className="sm:col-span-2">
-              <TextField
-                size="small"
-                label="Location / Barangay"
-                value={form.location}
-                onChange={update("location")}
-                fullWidth
-              />
-            </div>
+            />
             <div className="sm:col-span-2">
               <TextField
                 size="small"

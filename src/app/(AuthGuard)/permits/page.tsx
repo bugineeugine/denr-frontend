@@ -25,10 +25,11 @@ import ForestOutlinedIcon from "@mui/icons-material/ForestOutlined";
 
 /* ── status config ──────────────────────────────────────────────────── */
 const STATUS_STYLE: Record<string, { color: string; bg: string; dot: string }> = {
-  Pending:  { color: "#0369a1", bg: "#e0f2fe", dot: "#38bdf8" },
-  Expired:  { color: "#991b1b", bg: "#fee2e2", dot: "#f87171" },
-  Rejected: { color: "#92400e", bg: "#fef3c7", dot: "#d97706" },
-  Approved: { color: "#14532d", bg: "#dcfce7", dot: "#22c55e" },
+  Pending:   { color: "#0369a1", bg: "#e0f2fe", dot: "#38bdf8" },
+  Expired:   { color: "#991b1b", bg: "#fee2e2", dot: "#f87171" },
+  Rejected:  { color: "#92400e", bg: "#fef3c7", dot: "#d97706" },
+  Approved:  { color: "#14532d", bg: "#dcfce7", dot: "#22c55e" },
+  Suspended: { color: "#7f1d1d", bg: "#fecaca", dot: "#dc2626" },
 };
 const getStatus = (s: string) =>
   STATUS_STYLE[s] ?? { color: "#374151", bg: "#f3f4f6", dot: "#9ca3af" };
@@ -190,7 +191,7 @@ const PermitsPage = () => {
         accessorKey: "status",
         header: "Status",
         filterVariant: "select",
-        filterSelectOptions: ["Pending", "Expired", "Approved", "Rejected"],
+        filterSelectOptions: ["Pending", "Expired", "Approved", "Rejected", "Suspended"],
         size: 110,
         Cell: ({ row }) => <StatusBadge status={row.original.status} />,
       },

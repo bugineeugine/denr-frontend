@@ -5,6 +5,7 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import DocumentScannerOutlinedIcon from "@mui/icons-material/DocumentScannerOutlined";
 import ApprovalOutlinedIcon from "@mui/icons-material/ApprovalOutlined";
 import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 
 const menuListItem: MenuItemListType = [
   {
@@ -33,6 +34,13 @@ const menuListItem: MenuItemListType = [
     icon: ReportProblemOutlinedIcon,
     href: "/violations",
     segment: "violations",
+  },
+  {
+    label: "Archive",
+    icon: Inventory2OutlinedIcon,
+    href: "/archive",
+    segment: "archive",
+    action: ["canViewArchive"],
   },
   {
     label: "Request Applications",

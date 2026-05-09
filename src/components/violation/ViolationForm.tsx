@@ -11,8 +11,6 @@ const TYPES = [
   "Illegal Logging",
   "Transport Without Permit",
   "Expired Permit Use",
-  "Over-Quota Harvest",
-  "Restricted Species",
   "Document Falsification",
   "Other",
 ];

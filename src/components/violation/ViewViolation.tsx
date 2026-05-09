@@ -17,13 +17,6 @@ import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { ViolationDataType } from "@/types/violation";
 
-const SEV_STYLE: Record<string, { color: string; bg: string; border: string }> = {
-  Low: { color: "#0369a1", bg: "#e0f2fe", border: "#bae6fd" },
-  Medium: { color: "#92400e", bg: "#fef3c7", border: "#fde68a" },
-  High: { color: "#9a3412", bg: "#ffedd5", border: "#fed7aa" },
-  Critical: { color: "#991b1b", bg: "#fee2e2", border: "#fecaca" },
-};
-
 const STATUS_STYLE: Record<string, { color: string; bg: string }> = {
   Open: { color: "#991b1b", bg: "#fee2e2" },
   Investigating: { color: "#92400e", bg: "#fef3c7" },
@@ -51,7 +44,6 @@ const Field = ({
 
 const ViewViolation = ({ violation }: { violation: ViolationDataType }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const sev = SEV_STYLE[violation.severity] ?? SEV_STYLE.Low;
   const stat = STATUS_STYLE[violation.status] ?? { color: "#374151", bg: "#f3f4f6" };
 
   return (
@@ -115,12 +107,6 @@ const ViewViolation = ({ violation }: { violation: ViolationDataType }) => {
           </div>
 
           <div className="mt-3 flex items-center gap-2">
-            <span
-              className="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold"
-              style={{ background: sev.bg, color: sev.color, border: `1px solid ${sev.border}` }}
-            >
-              {violation.severity} severity
-            </span>
             <span
               className="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold"
               style={{ background: stat.bg, color: stat.color }}

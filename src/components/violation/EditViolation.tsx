@@ -17,7 +17,6 @@ import axiosInstance from "@/utils/axiosInstance";
 import { customToast } from "@/utils/customToast";
 import { ViolationDataType } from "@/types/violation";
 
-const SEVERITIES = ["Low", "Medium", "High", "Critical"];
 const STATUSES = ["Open", "Investigating", "Resolved", "Dismissed"];
 
 const EditViolation = ({ violation }: { violation: ViolationDataType }) => {
@@ -26,7 +25,6 @@ const EditViolation = ({ violation }: { violation: ViolationDataType }) => {
 
   const [form, setForm] = useState({
     status: violation.status,
-    severity: violation.severity,
     description: violation.description,
   });
 
@@ -66,7 +64,7 @@ const EditViolation = ({ violation }: { violation: ViolationDataType }) => {
           </p>
         </DialogTitle>
         <DialogContent>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 pt-2">
+          <div className="flex flex-col gap-3 pt-2">
             <TextField
               size="small"
               select
@@ -81,27 +79,13 @@ const EditViolation = ({ violation }: { violation: ViolationDataType }) => {
             </TextField>
             <TextField
               size="small"
-              select
-              label="Severity *"
-              value={form.severity}
-              onChange={update("severity")}
+              label="Description / Investigation Notes"
+              value={form.description}
+              onChange={update("description")}
               fullWidth
-            >
-              {SEVERITIES.map((s) => (
-                <MenuItem key={s} value={s}>{s}</MenuItem>
-              ))}
-            </TextField>
-            <div className="sm:col-span-2">
-              <TextField
-                size="small"
-                label="Description / Investigation Notes"
-                value={form.description}
-                onChange={update("description")}
-                fullWidth
-                multiline
-                minRows={4}
-              />
-            </div>
+              multiline
+              minRows={4}
+            />
           </div>
           {form.status === "Resolved" && (
             <p className="mt-3 text-[11px] text-emerald-700">

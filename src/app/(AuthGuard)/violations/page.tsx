@@ -12,17 +12,9 @@ import axiosInstance from "@/utils/axiosInstance";
 import { ViolationDataType, ViolationListResponse } from "@/types/violation";
 import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import CreateViolation from "@/components/violation/CreateViolation";
 import DeleteViolation from "@/components/violation/DeleteViolation";
 import ViewViolation from "@/components/violation/ViewViolation";
 import EditViolation from "@/components/violation/EditViolation";
-
-const SEVERITY_STYLE: Record<string, { color: string; bg: string }> = {
-  Low: { color: "#0369a1", bg: "#e0f2fe" },
-  Medium: { color: "#92400e", bg: "#fef3c7" },
-  High: { color: "#9a3412", bg: "#ffedd5" },
-  Critical: { color: "#991b1b", bg: "#fee2e2" },
-};
 
 const STATUS_STYLE: Record<string, { color: string; bg: string }> = {
   Open: { color: "#991b1b", bg: "#fee2e2" },
@@ -87,14 +79,6 @@ const ViolationsPage = () => {
           {new Date(row.original.date_recorded).toLocaleDateString()}
         </span>
       ),
-    },
-    {
-      accessorKey: "severity",
-      header: "Severity",
-      filterVariant: "select",
-      filterSelectOptions: ["Low", "Medium", "High", "Critical"],
-      size: 110,
-      Cell: ({ row }) => <Pill value={row.original.severity} map={SEVERITY_STYLE} />,
     },
     {
       accessorKey: "status",
@@ -222,7 +206,6 @@ const ViolationsPage = () => {
               <h1 className="text-[18px] font-bold leading-tight text-white">Violation Tracking</h1>
             </div>
           </div>
-          <CreateViolation />
         </div>
       </div>
 

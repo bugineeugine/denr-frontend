@@ -14,6 +14,10 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 import DoneAllOutlinedIcon from "@mui/icons-material/DoneAllOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
+import GavelOutlinedIcon from "@mui/icons-material/GavelOutlined";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import { NotificationListResponse, AppNotificationType } from "@/types/notification";
@@ -80,14 +84,20 @@ const NotificationBell = () => {
 
   return (
     <>
-      <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ mr: 1 }} aria-label="notifications">
+      <IconButton
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        sx={{ mr: 1 }}
+        size="large"
+        aria-label="notifications"
+        className="bg-action-hover"
+      >
         <Badge
           badgeContent={unread}
           color="error"
           max={99}
           slotProps={{ badge: { sx: { fontSize: "0.6rem", height: 16, minWidth: 16 } } }}
         >
-          <NotificationsNoneOutlinedIcon sx={{ fontSize: 22 }} />
+          <NotificationsNoneOutlinedIcon sx={{ fontSize: 25 }} />
         </Badge>
       </IconButton>
 
@@ -176,8 +186,7 @@ const NotificationBell = () => {
             <div
               className="relative px-5 py-4"
               style={{
-                background:
-                  SEVERITY_BG[selected.severity]?.bg ?? "#f1f5f9",
+                background: SEVERITY_BG[selected.severity]?.bg ?? "#f1f5f9",
                 borderBottom: "1.5px solid #e5e7eb",
               }}
             >
@@ -196,9 +205,7 @@ const NotificationBell = () => {
                   >
                     {SEVERITY_BG[selected.severity]?.label ?? selected.severity}
                   </span>
-                  <span className="text-[10px] font-semibold text-slate-500 truncate">
-                    {selected.type}
-                  </span>
+                  <span className="text-[10px] font-semibold text-slate-500 truncate">{selected.type}</span>
                 </div>
                 <IconButton
                   size="small"
@@ -214,12 +221,56 @@ const NotificationBell = () => {
             </div>
 
             <DialogContent sx={{ px: 3, py: 3, background: "#fff" }}>
-              <h3 className="text-[16px] font-bold text-slate-800 leading-snug mb-2">
-                {selected.title}
-              </h3>
-              <p className="text-[13px] text-slate-600 leading-relaxed whitespace-pre-wrap">
-                {selected.message}
-              </p>
+              <h3 className="text-[16px] font-bold text-slate-800 leading-snug mb-2">{selected.title}</h3>
+              <p className="text-[13px] text-slate-600 leading-relaxed whitespace-pre-wrap">{selected.message}</p>
+
+              {/* ── Violation guidance ─────────────────────────────────── */}
+              {selected.type.startsWith("violation.") && (
+                <div className="mt-4 space-y-3">
+                  <div className="rounded-xl p-4" style={{ background: "#fff7ed", border: "1.5px solid #fed7aa" }}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <GavelOutlinedIcon sx={{ fontSize: 16, color: "#9a3412" }} />
+                      <p className="text-[12px] font-bold text-orange-900">How to resolve this violation</p>
+                    </div>
+                    <ol className="ml-5 list-decimal space-y-1 text-[12px] text-slate-700">
+                      <li>
+                        Your permit has been <strong>suspended</strong> while this is reviewed.
+                      </li>
+                      <li>
+                        Visit the DENR-CENRO office <strong>immediately</strong> with a valid ID and a copy of your
+                        permit.
+                      </li>
+                      <li>Submit any supporting documents (photos, receipts, statements) that clarify the incident.</li>
+                      <li>
+                        Once the case is marked <em>Resolved</em> by an officer, your permit will be reactivated
+                        automatically.
+                      </li>
+                    </ol>
+                  </div>
+
+                  <div className="rounded-xl p-4" style={{ background: "#f0fdf4", border: "1.5px solid #bbf7d0" }}>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-700 mb-2">
+                      DENR — CENRO Contact
+                    </p>
+                    <div className="space-y-1.5 text-[12px] text-slate-700">
+                      <div className="flex items-start gap-2">
+                        <LocationOnOutlinedIcon sx={{ fontSize: 14, color: "#15803d", mt: "2px" }} />
+                        <span>Brgy. Duhat, Santa Cruz, Laguna</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <PhoneOutlinedIcon sx={{ fontSize: 14, color: "#15803d" }} />
+                        <span>(049) 501-1234</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <EmailOutlinedIcon sx={{ fontSize: 14, color: "#15803d" }} />
+                        <span>cenro.santacruz@denr.gov.ph</span>
+                      </div>
+                      <p className="pt-1 text-[11px] text-slate-500 italic">Office hours: Mon-Fri, 8:00 AM – 5:00 PM</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="mt-4 flex items-center gap-1.5 text-[11px] text-slate-400">
                 <AccessTimeRoundedIcon sx={{ fontSize: 13 }} />
                 <span>{new Date(selected.created_at).toLocaleString()}</span>
@@ -228,13 +279,8 @@ const NotificationBell = () => {
               </div>
             </DialogContent>
 
-            <DialogActions
-              sx={{ px: 3, py: 2, background: "#f8fafc", borderTop: "1.5px solid #e5e7eb" }}
-            >
-              <Button
-                onClick={() => setSelected(null)}
-                sx={{ textTransform: "none", color: "#64748b" }}
-              >
+            <DialogActions sx={{ px: 3, py: 2, background: "#f8fafc", borderTop: "1.5px solid #e5e7eb" }}>
+              <Button onClick={() => setSelected(null)} sx={{ textTransform: "none", color: "#64748b" }}>
                 Close
               </Button>
             </DialogActions>

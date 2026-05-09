@@ -42,11 +42,9 @@ const AppBarContent = ({ showBurger = false }: { showBurger?: boolean }) => {
 
       {/* ── Divider ───────────────────────────────────────────── */}
       <div className="mx-3 hidden md:block h-6 w-px" style={{ background: "rgba(255,255,255,0.15)" }} />
-
+      <NotificationBell />
       {/* ── Account ───────────────────────────────────────────── */}
       <LiveDateTime />
-
-      <NotificationBell />
 
       <Account />
     </>
