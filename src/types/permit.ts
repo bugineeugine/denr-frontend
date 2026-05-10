@@ -43,6 +43,7 @@ export type PermitDataType = {
   otherDocuments: string;
   steps: number;
   status_step: string;
+  has_active_violation?: boolean;
 
   creator: {
     id: string;

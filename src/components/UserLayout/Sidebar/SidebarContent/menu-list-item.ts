@@ -34,6 +34,7 @@ const menuListItem: MenuItemListType = [
     icon: ReportProblemOutlinedIcon,
     href: "/violations",
     segment: "violations",
+    action: ["canViewViolations"],
   },
   {
     label: "Archive",

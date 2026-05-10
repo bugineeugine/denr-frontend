@@ -205,7 +205,7 @@ const PermitsPage = () => {
             <div className="flex items-center gap-0.5">
               <PermitDrawer permit={permit} />
               <EditPermit permit={permit} />
-              {permit.status === "Approved" && <PrintPermit permit={permit} />}
+              {permit.status === "Approved" && !permit.has_active_violation && <PrintPermit permit={permit} />}
               {(permit.status === "Expired" || permit.status === "Approved") && (
                 <RenewPermit permit={permit} />
               )}

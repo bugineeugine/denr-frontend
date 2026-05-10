@@ -6,6 +6,7 @@ export type ViolationDataType = {
   permit_id: string | null;
   violator_name: string;
   contact_number: string | null;
+  vehicle_plate: string | null;
   location: string | null;
   lat: number | null;
   lng: number | null;

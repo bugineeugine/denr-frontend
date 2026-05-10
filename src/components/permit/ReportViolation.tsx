@@ -26,6 +26,7 @@ const TYPES = [
 const emptyForm = {
   violator_name: "",
   contact_number: "",
+  vehicle_plate: "",
   location: "",
   violation_type: "Illegal Logging",
   severity: "Medium",
@@ -58,6 +59,11 @@ const ReportViolation = ({ permit }: { permit: PermitDataType }) => {
 
   const update = (k: keyof typeof emptyForm) => (e: any) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const updateContact = (e: any) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+    setForm((f) => ({ ...f, contact_number: digits }));
+  };
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: async () => {
@@ -178,7 +184,20 @@ const ReportViolation = ({ permit }: { permit: PermitDataType }) => {
               size="small"
               label="Contact Number"
               value={form.contact_number}
-              onChange={update("contact_number")}
+              onChange={updateContact}
+              fullWidth
+              slotProps={{ htmlInput: { inputMode: "numeric", pattern: "[0-9]*", maxLength: 11 } }}
+              helperText={
+                form.contact_number && form.contact_number.length !== 11
+                  ? `${form.contact_number.length}/11 digits`
+                  : " "
+              }
+            />
+            <TextField
+              size="small"
+              label="Vehicle Plate Number"
+              value={form.vehicle_plate}
+              onChange={update("vehicle_plate")}
               fullWidth
             />
             <TextField
@@ -203,7 +222,7 @@ const ReportViolation = ({ permit }: { permit: PermitDataType }) => {
             <div className="sm:col-span-2">
               <TextField
                 size="small"
-                label="Description *"
+                label="Description (optional)"
                 value={form.description}
                 onChange={update("description")}
                 fullWidth
@@ -219,7 +238,7 @@ const ReportViolation = ({ permit }: { permit: PermitDataType }) => {
           </Button>
           <Button
             variant="contained"
-            disabled={isPending || !form.violator_name || !form.description}
+            disabled={isPending || !form.violator_name}
             onClick={() => mutateAsync()}
             sx={{
               background: "linear-gradient(135deg, #b91c1c, #dc2626)",

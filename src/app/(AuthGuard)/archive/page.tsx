@@ -18,6 +18,7 @@ import { useMemo } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { customToast } from "@/utils/customToast";
 import { PermitDataType } from "@/types/permit";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 type ArchivedUser = {
   id: string;
@@ -28,9 +29,27 @@ type ArchivedUser = {
   deleted_at: string;
 };
 
+type ConfirmState = {
+  open: boolean;
+  title: string;
+  message: React.ReactNode;
+  confirmLabel: string;
+  tone: "primary" | "danger" | "success";
+  onConfirm: () => void;
+};
+
 const ArchivePage = () => {
   const [tab, setTab] = useState<"permits" | "users">("permits");
   const queryClient = useQueryClient();
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    open: false,
+    title: "",
+    message: "",
+    confirmLabel: "Confirm",
+    tone: "primary",
+    onConfirm: () => {},
+  });
+  const closeConfirm = () => setConfirmState((s) => ({ ...s, open: false }));
 
   const permitsQ = useQuery({
     queryKey: ["archive", "permits"],
@@ -132,18 +151,50 @@ const ArchivePage = () => {
         Cell: ({ row }) => (
           <div className="flex items-center gap-0.5">
             <Tooltip title="Restore">
-              <IconButton size="small" onClick={() => restorePermit.mutate(row.original.id)} sx={{ color: "#15803d" }}>
+              <IconButton
+                size="small"
+                onClick={() =>
+                  setConfirmState({
+                    open: true,
+                    title: "Restore this permit?",
+                    message: (
+                      <>
+                        Restore <strong>{row.original.permit_no}</strong> back to the active permit list?
+                      </>
+                    ),
+                    confirmLabel: "Restore",
+                    tone: "success",
+                    onConfirm: () => {
+                      restorePermit.mutate(row.original.id);
+                      closeConfirm();
+                    },
+                  })
+                }
+                sx={{ color: "#15803d" }}
+              >
                 <RestoreOutlinedIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete permanently">
               <IconButton
                 size="small"
-                onClick={() => {
-                  if (confirm(`Permanently delete ${row.original.permit_no}? This cannot be undone.`)) {
-                    purgePermit.mutate(row.original.id);
-                  }
-                }}
+                onClick={() =>
+                  setConfirmState({
+                    open: true,
+                    title: "Permanently delete?",
+                    message: (
+                      <>
+                        Permanently delete <strong>{row.original.permit_no}</strong>? This cannot be undone.
+                      </>
+                    ),
+                    confirmLabel: "Delete forever",
+                    tone: "danger",
+                    onConfirm: () => {
+                      purgePermit.mutate(row.original.id);
+                      closeConfirm();
+                    },
+                  })
+                }
                 sx={{ color: "#dc2626" }}
               >
                 <DeleteForeverOutlinedIcon sx={{ fontSize: 18 }} />
@@ -198,18 +249,50 @@ const ArchivePage = () => {
         Cell: ({ row }) => (
           <div className="flex items-center gap-0.5">
             <Tooltip title="Restore">
-              <IconButton size="small" onClick={() => restoreUser.mutate(row.original.id)} sx={{ color: "#15803d" }}>
+              <IconButton
+                size="small"
+                onClick={() =>
+                  setConfirmState({
+                    open: true,
+                    title: "Restore this user?",
+                    message: (
+                      <>
+                        Restore <strong>{row.original.name}</strong>&apos;s account?
+                      </>
+                    ),
+                    confirmLabel: "Restore",
+                    tone: "success",
+                    onConfirm: () => {
+                      restoreUser.mutate(row.original.id);
+                      closeConfirm();
+                    },
+                  })
+                }
+                sx={{ color: "#15803d" }}
+              >
                 <RestoreOutlinedIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete permanently">
               <IconButton
                 size="small"
-                onClick={() => {
-                  if (confirm(`Permanently delete ${row.original.name}? This cannot be undone.`)) {
-                    purgeUser.mutate(row.original.id);
-                  }
-                }}
+                onClick={() =>
+                  setConfirmState({
+                    open: true,
+                    title: "Permanently delete?",
+                    message: (
+                      <>
+                        Permanently delete <strong>{row.original.name}</strong>? This cannot be undone.
+                      </>
+                    ),
+                    confirmLabel: "Delete forever",
+                    tone: "danger",
+                    onConfirm: () => {
+                      purgeUser.mutate(row.original.id);
+                      closeConfirm();
+                    },
+                  })
+                }
                 sx={{ color: "#dc2626" }}
               >
                 <DeleteForeverOutlinedIcon sx={{ fontSize: 18 }} />
@@ -317,6 +400,16 @@ const ArchivePage = () => {
           <MaterialReactTable table={userTable} />
         )}
       </div>
+
+      <ConfirmDialog
+        open={confirmState.open}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmLabel={confirmState.confirmLabel}
+        tone={confirmState.tone}
+        onConfirm={confirmState.onConfirm}
+        onClose={closeConfirm}
+      />
     </div>
   );
 };

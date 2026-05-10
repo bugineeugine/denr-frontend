@@ -343,7 +343,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ perm
       });
     }
     const permit = await axiosInstance.get("/permits/find/" + permitNo);
-    if (permit.data.data.status !== "Approved") {
+    const data = permit.data.data;
+    if (data.status !== "Approved" || data.has_active_violation) {
       const stream = await renderToStream(<PermitNotFoundPdf />);
       return new NextResponse(stream as unknown as ReadableStream, {
         headers: {

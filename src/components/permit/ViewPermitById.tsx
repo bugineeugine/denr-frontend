@@ -142,6 +142,9 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
   const [docTab, setDocTab] = useState(0);
   const statusMeta = getStatus(permit.status ?? "");
   const isExpired = permit.status?.toLowerCase() === "expired";
+  const isSuspended = permit.status?.toLowerCase() === "suspended";
+  const hasActiveViolation = !!permit.has_active_violation;
+  const isLocked = isExpired || isSuspended || hasActiveViolation;
 
   /* email state */
   const [emailSent, setEmailSent] = useState(false);
@@ -226,6 +229,36 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
           <ArrowBackRoundedIcon sx={{ fontSize: 16 }} />
           Back to Dashboard
         </button>
+
+        {/* ── Locked banner ─────────────────────────────────────────── */}
+        {isLocked && !isExpired && (
+          <div
+            className="mb-5 flex items-start gap-3 overflow-hidden rounded-2xl p-5"
+            style={{
+              background: "linear-gradient(135deg, #fef2f2, #fff7ed)",
+              border: "1.5px solid #fecaca",
+              boxShadow: "0 2px 12px rgba(153,27,27,0.08)",
+            }}
+          >
+            <div
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+              style={{ background: "#fee2e2", border: "1px solid #fecaca" }}
+            >
+              <WarningAmberRoundedIcon sx={{ fontSize: 18, color: "#b91c1c" }} />
+            </div>
+            <div>
+              <p className="text-[13px] font-bold text-red-800">
+                {hasActiveViolation
+                  ? "This permit is locked due to an active violation"
+                  : "This permit is currently suspended"}
+              </p>
+              <p className="mt-0.5 text-[12px] text-red-500/80">
+                It cannot be downloaded or used while a violation is open or under investigation.
+                The applicant must visit the DENR-CENRO office to resolve this case.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* ── Expired alert banner ───────────────────────────────────── */}
         {isExpired && (

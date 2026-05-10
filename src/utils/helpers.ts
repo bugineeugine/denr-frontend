@@ -23,7 +23,7 @@ export const adminRoutes: Record<string, string[]> = {
   "/citizen": ["canViewCitizen"],
   "/approval/for-approval": ["canViewForApproval"],
   "/approval/history-approve": ["canViewHistoryApprove"],
-  "/violations": ["canViewPermits"],
+  "/violations": ["canViewViolations"],
   "/archive": ["canViewArchive"],
 };
 
