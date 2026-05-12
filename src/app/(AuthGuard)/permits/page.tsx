@@ -204,11 +204,19 @@ const PermitsPage = () => {
           return (
             <div className="flex items-center gap-0.5">
               <PermitDrawer permit={permit} />
-              <EditPermit permit={permit} />
-              {permit.status === "Approved" && !permit.has_active_violation && <PrintPermit permit={permit} />}
-              {(permit.status === "Expired" || permit.status === "Approved") && (
-                <RenewPermit permit={permit} />
+              <HasPermissionsClient action={["canEditPermit"]}>
+                <EditPermit permit={permit} />
+              </HasPermissionsClient>
+              {permit.status === "Approved" && !permit.has_active_violation && (
+                <HasPermissionsClient action={["canEditPermit"]}>
+                  <PrintPermit permit={permit} />
+                </HasPermissionsClient>
               )}
+              <HasPermissionsClient action={["canEditPermit"]}>
+                {(permit.status === "Expired" || permit.status === "Approved") && (
+                  <RenewPermit permit={permit} />
+                )}
+              </HasPermissionsClient>
               <HasPermissionsClient action={["canDeletePermit"]}>
                 <DeletePermit permit={permit} />
               </HasPermissionsClient>

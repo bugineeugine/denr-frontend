@@ -317,8 +317,12 @@ const ViewPermit = ({ permit }: { permit: PermitDataType }) => {
                       <Grid size={12}>
                         <MapContainer
                           center={[permit.lat, permit.lng]}
-                          zoom={6}
+                          zoom={13}
+                          minZoom={10}
+                          maxZoom={18}
                           scrollWheelZoom={true}
+                          maxBounds={[[14.10, 121.00], [14.55, 121.85]]}
+                          maxBoundsViscosity={1.0}
                           style={{ height: "50vh", width: "100%" }}
                         >
                           <TileLayer

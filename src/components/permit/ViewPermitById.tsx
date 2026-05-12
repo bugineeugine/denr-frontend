@@ -422,7 +422,16 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
               <DetailItem label="Longitude" value={permit.lng} />
             </div>
             <div className="overflow-hidden rounded-xl" style={{ border: "1.5px solid #e5e7eb", boxShadow: "0 2px 8px rgba(20,83,45,0.08)" }}>
-              <MapContainer center={[permit.lat, permit.lng]} zoom={10} scrollWheelZoom={true} style={{ height: "40vh", width: "100%" }}>
+              <MapContainer
+                center={[permit.lat, permit.lng]}
+                zoom={13}
+                minZoom={10}
+                maxZoom={18}
+                scrollWheelZoom={true}
+                maxBounds={[[14.10, 121.00], [14.55, 121.85]]}
+                maxBoundsViscosity={1.0}
+                style={{ height: "40vh", width: "100%" }}
+              >
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

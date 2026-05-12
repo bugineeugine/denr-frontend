@@ -15,6 +15,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import DeleteViolation from "@/components/violation/DeleteViolation";
 import ViewViolation from "@/components/violation/ViewViolation";
 import EditViolation from "@/components/violation/EditViolation";
+import HasPermissionsClient from "@/components/HasPermissionsClient";
 
 const STATUS_STYLE: Record<string, { color: string; bg: string }> = {
   Open: { color: "#991b1b", bg: "#fee2e2" },
@@ -114,8 +115,12 @@ const ViolationsPage = () => {
       Cell: ({ row }) => (
         <div className="flex items-center gap-0.5">
           <ViewViolation violation={row.original} />
-          <EditViolation violation={row.original} />
-          <DeleteViolation violation={row.original} />
+          <HasPermissionsClient action={["canEditPermit"]}>
+            <EditViolation violation={row.original} />
+          </HasPermissionsClient>
+          <HasPermissionsClient action={["canDeletePermit"]}>
+            <DeleteViolation violation={row.original} />
+          </HasPermissionsClient>
         </div>
       ),
     },

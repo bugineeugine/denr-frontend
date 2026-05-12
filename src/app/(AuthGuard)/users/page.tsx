@@ -8,7 +8,7 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import { UserDataType, UserListsType } from "@/types/user";
@@ -19,6 +19,18 @@ import DeleteUser from "@/components/user/DeleteUser";
 import useAuth from "@/store/useAuth";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+
+type RoleTab = "all" | "admin" | "officer" | "validator" | "applicant";
+
+const ROLE_TABS: { value: RoleTab; label: string }[] = [
+  { value: "all",       label: "All Users" },
+  { value: "admin",     label: "Admins" },
+  { value: "officer",   label: "Officers" },
+  { value: "validator", label: "Validators" },
+  { value: "applicant", label: "Applicants" },
+];
 
 /* ── role config ─────────────────────────────────────────────────────── */
 const ROLE_STYLE: Record<string, { color: string; bg: string; dot: string }> = {
@@ -75,6 +87,7 @@ const EmptyState = () => (
 /* ── main page ───────────────────────────────────────────────────────── */
 const UsersPage = () => {
   const useData = useAuth((state) => state.userData);
+  const [activeTab, setActiveTab] = useState<RoleTab>("all");
 
   const { data, isLoading } = useQuery<UserListsType>({
     queryKey: ["user-lists"],
@@ -84,6 +97,22 @@ const UsersPage = () => {
     },
     retry: false,
   });
+
+  const filteredData = useMemo(() => {
+    const all = data?.data ?? [];
+    if (activeTab === "all") return all;
+    return all.filter((u) => u.role?.toLowerCase() === activeTab);
+  }, [data, activeTab]);
+
+  const roleCounts = useMemo(() => {
+    const counts: Record<RoleTab, number> = { all: 0, admin: 0, officer: 0, validator: 0, applicant: 0 };
+    (data?.data ?? []).forEach((u) => {
+      counts.all++;
+      const r = (u.role ?? "").toLowerCase() as RoleTab;
+      if (r in counts && r !== "all") counts[r]++;
+    });
+    return counts;
+  }, [data]);
 
   const columns = useMemo<MRT_ColumnDef<UserDataType>[]>(
     () => [
@@ -147,7 +176,7 @@ const UsersPage = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: data?.data ?? [],
+    data: filteredData,
     enableFilters: true,
     enablePagination: true,
     enableBottomToolbar: true,
@@ -245,7 +274,7 @@ const UsersPage = () => {
           />
         </div>
         <span className="ml-auto text-[11px] font-semibold text-slate-400">
-          {data?.data?.length ?? 0} user{data?.data?.length !== 1 ? "s" : ""}
+          {filteredData.length} user{filteredData.length !== 1 ? "s" : ""}
         </span>
       </div>
     ),
@@ -291,6 +320,53 @@ const UsersPage = () => {
           </div>
           <CreateUser />
         </div>
+      </div>
+
+      {/* ── Role tabs ───────────────────────────────────────────────── */}
+      <div
+        className="shrink-0 px-5 pt-3"
+        style={{ background: "#f8fafc", borderBottom: "1px solid #e5e7eb" }}
+      >
+        <Tabs
+          value={activeTab}
+          onChange={(_, v) => setActiveTab(v)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            minHeight: 38,
+            "& .MuiTab-root": {
+              textTransform: "none",
+              fontSize: "0.78rem",
+              fontWeight: 700,
+              minHeight: 38,
+              color: "#64748b",
+              gap: 0.5,
+            },
+            "& .Mui-selected": { color: "#14532d" },
+            "& .MuiTabs-indicator": { background: "#14532d", height: 3, borderRadius: 2 },
+          }}
+        >
+          {ROLE_TABS.map((t) => (
+            <Tab
+              key={t.value}
+              value={t.value}
+              label={
+                <span className="flex items-center gap-1.5">
+                  {t.label}
+                  <span
+                    className="rounded-full px-1.5 py-0.5 text-[10px] font-bold"
+                    style={{
+                      background: activeTab === t.value ? "#dcfce7" : "#e5e7eb",
+                      color: activeTab === t.value ? "#14532d" : "#64748b",
+                    }}
+                  >
+                    {roleCounts[t.value]}
+                  </span>
+                </span>
+              }
+            />
+          ))}
+        </Tabs>
       </div>
 
       {/* ── Table ───────────────────────────────────────────────────── */}

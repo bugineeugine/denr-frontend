@@ -61,16 +61,31 @@ export default function PermitMap({ permits }: { permits: PermitDataType[] }) {
 
       {/* Map */}
       <div style={{ height: "50vh" }}>
+        {/* Bounds cover Laguna 3rd + 4th districts (Sta. Cruz, Pagsanjan, Pakil,
+            Paete, Cavinti, Mabitac, Famy, Siniloan, Sta. Maria, Kalayaan; plus
+            San Pedro, Biñan, Sta. Rosa, Cabuyao). */}
         <MapContainer
-          center={[16.0, 121.0]}
-          zoom={7}
+          center={[14.28, 121.42]}
+          zoom={11}
+          minZoom={10}
+          maxZoom={18}
           scrollWheelZoom={true}
+          maxBounds={[
+            [14.10, 121.00], // SW corner
+            [14.55, 121.85], // NE corner
+          ]}
+          maxBoundsViscosity={1.0}
           style={{ height: "100%", width: "100%" }}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            bounds={[
+              [14.10, 121.00],
+              [14.55, 121.85],
+            ]}
           />
+          {/* Sub-region label */}
           {permits.map((permit) => (
             <Marker key={permit.id} position={[permit.lat, permit.lng]}>
               <Tooltip permanent direction="top">

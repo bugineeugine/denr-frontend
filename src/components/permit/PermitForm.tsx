@@ -105,7 +105,19 @@ const MapMarker = () => {
   const lng = getValues("lng") ?? 0;
 
   return (
-    <MapContainer center={[lat, lng]} zoom={6} scrollWheelZoom={true} style={{ height: "50vh", width: "100%" }}>
+    <MapContainer
+      center={[lat || 14.28, lng || 121.42]}
+      zoom={11}
+      minZoom={10}
+      maxZoom={18}
+      scrollWheelZoom={true}
+      maxBounds={[
+        [14.10, 121.00],
+        [14.55, 121.85],
+      ]}
+      maxBoundsViscosity={1.0}
+      style={{ height: "50vh", width: "100%" }}
+    >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

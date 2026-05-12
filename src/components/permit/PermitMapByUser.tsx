@@ -17,7 +17,19 @@ L.Icon.Default.mergeOptions({
 
 const PermitMapByUser = ({ permits }: { permits: PermitDataType[] }) => {
   return (
-    <MapContainer center={[16.0, 121.0]} zoom={7} scrollWheelZoom={true} style={{ height: "50vh", width: "100%" }}>
+    <MapContainer
+      center={[14.28, 121.42]}
+      zoom={11}
+      minZoom={10}
+      maxZoom={18}
+      scrollWheelZoom={true}
+      maxBounds={[
+        [14.10, 121.00],
+        [14.55, 121.85],
+      ]}
+      maxBoundsViscosity={1.0}
+      style={{ height: "50vh", width: "100%" }}
+    >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

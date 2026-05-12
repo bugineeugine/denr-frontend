@@ -18,7 +18,10 @@ import GavelOutlinedIcon from "@mui/icons-material/GavelOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import useAuth from "@/store/useAuth";
 import axiosInstance from "@/utils/axiosInstance";
 import { NotificationListResponse, AppNotificationType } from "@/types/notification";
 
@@ -52,6 +55,36 @@ const NotificationBell = () => {
   const [selected, setSelected] = useState<AppNotificationType | null>(null);
   const open = Boolean(anchorEl);
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const userData = useAuth((s) => s.userData);
+  const role = userData?.role?.toLowerCase();
+
+  const resolveViewLink = (n: AppNotificationType): string | null => {
+    // Applicants don't get a View button — they can navigate from their own pages
+    if (role === "applicant") return null;
+
+    // Permit-related routing:
+    //  - admin       → /permits (full management view)
+    //  - officer     → /for-approval (officers review the approval queue)
+    //  - validator   → /permits (read-only)
+    if (n.type.startsWith("permit.")) {
+      if (role === "officer") return "/for-approval";
+      if (role === "admin" || role === "validator") return "/permits";
+      return n.link || null;
+    }
+    // Violation-related: staff go to /violations
+    if (n.type.startsWith("violation.")) {
+      return "/violations";
+    }
+    return n.link || null;
+  };
+
+  const handleView = () => {
+    if (!selected) return;
+    const link = resolveViewLink(selected);
+    if (link) router.push(link);
+    setSelected(null);
+  };
 
   const { data } = useQuery<NotificationListResponse>({
     queryKey: ["notifications"],
@@ -283,6 +316,21 @@ const NotificationBell = () => {
               <Button onClick={() => setSelected(null)} sx={{ textTransform: "none", color: "#64748b" }}>
                 Close
               </Button>
+              {resolveViewLink(selected) && (
+                <Button
+                  variant="contained"
+                  onClick={handleView}
+                  startIcon={<VisibilityOutlinedIcon sx={{ fontSize: 16 }} />}
+                  sx={{
+                    background: "linear-gradient(135deg, #14532d, #15803d)",
+                    textTransform: "none",
+                    fontWeight: 700,
+                    "&:hover": { background: "linear-gradient(135deg, #15803d, #16a34a)" },
+                  }}
+                >
+                  View
+                </Button>
+              )}
             </DialogActions>
           </>
         )}
