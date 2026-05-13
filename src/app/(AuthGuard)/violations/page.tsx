@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   MaterialReactTable,
   MRT_ColumnDef,
@@ -15,6 +15,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import DeleteViolation from "@/components/violation/DeleteViolation";
 import ViewViolation from "@/components/violation/ViewViolation";
 import EditViolation from "@/components/violation/EditViolation";
+import ViolationReportBar, { emptyViolationFilters, ViolationReportFilters } from "@/components/violation/ViolationReportBar";
 import HasPermissionsClient from "@/components/HasPermissionsClient";
 
 const STATUS_STYLE: Record<string, { color: string; bg: string }> = {
@@ -37,6 +38,8 @@ const Pill = ({ value, map }: { value: string; map: Record<string, { color: stri
 };
 
 const ViolationsPage = () => {
+  const [filters, setFilters] = useState<ViolationReportFilters>(emptyViolationFilters);
+
   const { data, isLoading } = useQuery<ViolationListResponse>({
     queryKey: ["violation-lists"],
     queryFn: async () => {
@@ -45,6 +48,23 @@ const ViolationsPage = () => {
     },
     retry: false,
   });
+
+  const filteredRows = useMemo(() => {
+    const all = data?.data ?? [];
+    return all.filter((v) => {
+      if (filters.status && v.status !== filters.status) return false;
+      if (filters.permitNo) {
+        const pn = (v.permit?.permit_no ?? "").toLowerCase();
+        if (!pn.includes(filters.permitNo.toLowerCase())) return false;
+      }
+      if (filters.from || filters.to) {
+        const recorded = new Date(v.date_recorded);
+        if (filters.from && recorded < new Date(filters.from + "T00:00:00")) return false;
+        if (filters.to && recorded > new Date(filters.to + "T23:59:59")) return false;
+      }
+      return true;
+    });
+  }, [data, filters]);
 
   const columns = useMemo<MRT_ColumnDef<ViolationDataType>[]>(() => [
     {
@@ -109,6 +129,41 @@ const ViolationsPage = () => {
       },
     },
     {
+      accessorKey: "recorder.name",
+      header: "Recorded By",
+      enableColumnFilter: false,
+      Cell: ({ row }) => {
+        const r = row.original.recorder;
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[12px] font-semibold text-slate-700">
+              {r?.name ?? "—"}
+            </span>
+            <span className="text-[10.5px] text-slate-400 truncate">
+              {r?.position ?? r?.role ?? r?.email ?? ""}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "updater.name",
+      header: "Last Updated By",
+      enableColumnFilter: false,
+      Cell: ({ row }) => {
+        const u = row.original.updater;
+        if (!u) return <span className="text-[11px] text-slate-400">—</span>;
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[12px] font-semibold text-slate-700">{u.name}</span>
+            <span className="text-[10.5px] text-slate-400 truncate">
+              {u.position ?? u.role ?? u.email ?? ""}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
       id: "action",
       header: "",
       size: 140,
@@ -128,7 +183,7 @@ const ViolationsPage = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: data?.data ?? [],
+    data: filteredRows,
     enableFilters: true,
     enablePagination: true,
     enableGlobalFilter: true,
@@ -178,7 +233,7 @@ const ViolationsPage = () => {
           />
         </div>
         <span className="ml-auto text-[11px] font-semibold text-slate-400">
-          {data?.data?.length ?? 0} record{data?.data?.length !== 1 ? "s" : ""}
+          {filteredRows.length} record{filteredRows.length !== 1 ? "s" : ""}
         </span>
       </div>
     ),
@@ -215,6 +270,11 @@ const ViolationsPage = () => {
       </div>
 
       <div className="min-h-0 flex-1 overflow-auto p-5">
+        <ViolationReportBar
+          filters={filters}
+          onChange={setFilters}
+          filteredRows={filteredRows}
+        />
         <MaterialReactTable table={table} />
       </div>
     </div>

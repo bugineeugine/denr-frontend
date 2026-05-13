@@ -213,7 +213,7 @@ const HistoryApprovePage = () => {
           </div>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-300/70">DENR CENRO</p>
-            <h1 className="text-[18px] font-bold leading-tight text-white">Approval History</h1>
+            <h1 className="text-[18px] font-bold leading-tight text-white">History</h1>
             <p className="text-[11px] text-emerald-200/60 mt-0.5">Applications you have approved</p>
           </div>
         </div>

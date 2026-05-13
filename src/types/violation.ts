@@ -18,6 +18,7 @@ export type ViolationDataType = {
   status: ViolationStatus;
   evidence: string | null;
   recorded_by: string;
+  updated_by: string | null;
   created_at: string;
   updated_at: string;
   permit?: {
@@ -29,6 +30,15 @@ export type ViolationDataType = {
     id: string;
     name: string;
     email: string;
+    role?: string | null;
+    position?: string | null;
+  } | null;
+  updater?: {
+    id: string;
+    name: string;
+    email: string;
+    role?: string | null;
+    position?: string | null;
   } | null;
 };
 

@@ -19,7 +19,14 @@ export type DashboardDatatype = {
     byType: { violation_type: string; total: number }[];
   };
   topViolatorLocations?: { location: string; total: number; lat: number; lng: number }[];
-  dssAlerts?: { level: "info" | "warning" | "high" | "critical"; title: string; message: string }[];
+  dssAlerts?: {
+    type?: "expiring_soon" | "expired" | "suspended" | "open_violations" | "permit";
+    permit_no?: string;
+    level: "info" | "warning" | "high" | "critical";
+    title: string;
+    message: string;
+    count?: number;
+  }[];
   expiredPermitCount?: number;
   expiringSoonCount?: number;
 };
