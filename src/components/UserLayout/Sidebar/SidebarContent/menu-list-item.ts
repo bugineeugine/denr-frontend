@@ -45,7 +45,7 @@ const menuListItem: MenuItemListType = [
     action: ["canViewArchive"],
   },
   {
-    label: "System",
+    label: "Monitoring Documents",
     segment: "system",
     icon: SettingsApplicationsOutlinedIcon,
     action: ["canViewSystem"],
@@ -63,7 +63,7 @@ const menuListItem: MenuItemListType = [
         action: ["canViewSystem"],
       },
       {
-        label: "Monitoring Documents",
+        label: "Supporting Documents",
         href: "/system/documents",
         segment: "documents",
         action: ["canViewSystem"],
