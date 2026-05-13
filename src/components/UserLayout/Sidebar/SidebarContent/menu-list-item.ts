@@ -7,6 +7,7 @@ import ApprovalOutlinedIcon from "@mui/icons-material/ApprovalOutlined";
 import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import SettingsApplicationsOutlinedIcon from "@mui/icons-material/SettingsApplicationsOutlined";
+import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 
 const menuListItem: MenuItemListType = [
   {
@@ -69,6 +70,13 @@ const menuListItem: MenuItemListType = [
         action: ["canViewSystem"],
       },
     ],
+  },
+  {
+    label: "Reports Application",
+    icon: AssessmentOutlinedIcon,
+    href: "/approval-report",
+    segment: "approval-report",
+    action: ["canViewSystem"],
   },
   {
     label: "Request Applications",

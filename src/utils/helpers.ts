@@ -28,6 +28,7 @@ export const adminRoutes: Record<string, string[]> = {
   "/system/backup": ["canViewSystem"],
   "/system/activity": ["canViewSystem"],
   "/system/documents": ["canViewSystem"],
+  "/approval-report": ["canViewSystem"],
 };
 
 export const hasPermissionMiddleware = (userPermissions: string[], requiredPermissions: string[]): boolean => {
