@@ -6,6 +6,7 @@ import DocumentScannerOutlinedIcon from "@mui/icons-material/DocumentScannerOutl
 import ApprovalOutlinedIcon from "@mui/icons-material/ApprovalOutlined";
 import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import SettingsApplicationsOutlinedIcon from "@mui/icons-material/SettingsApplicationsOutlined";
 
 const menuListItem: MenuItemListType = [
   {
@@ -42,6 +43,32 @@ const menuListItem: MenuItemListType = [
     href: "/archive",
     segment: "archive",
     action: ["canViewArchive"],
+  },
+  {
+    label: "System",
+    segment: "system",
+    icon: SettingsApplicationsOutlinedIcon,
+    action: ["canViewSystem"],
+    children: [
+      {
+        label: "Backup & Restore",
+        href: "/system/backup",
+        segment: "backup",
+        action: ["canViewSystem"],
+      },
+      {
+        label: "Activity Logs",
+        href: "/system/activity",
+        segment: "activity",
+        action: ["canViewSystem"],
+      },
+      {
+        label: "Monitoring Documents",
+        href: "/system/documents",
+        segment: "documents",
+        action: ["canViewSystem"],
+      },
+    ],
   },
   {
     label: "Request Applications",

@@ -109,7 +109,7 @@ const PermitType = ({ permitByYear }: { permitByYear: DashboardDatatype["permits
 
         <ResponsiveContainer width="100%">
           <BarChart data={completeBlotterData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-            <CartesianGrid vertical={false} strokeDasharray={3.3} stroke="var(--mui-palette-divider)" />
+            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="var(--mui-palette-divider)" />
             <XAxis
               dataKey="month"
               tickLine={false}

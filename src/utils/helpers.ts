@@ -25,6 +25,9 @@ export const adminRoutes: Record<string, string[]> = {
   "/approval/history-approve": ["canViewHistoryApprove"],
   "/violations": ["canViewViolations"],
   "/archive": ["canViewArchive"],
+  "/system/backup": ["canViewSystem"],
+  "/system/activity": ["canViewSystem"],
+  "/system/documents": ["canViewSystem"],
 };
 
 export const hasPermissionMiddleware = (userPermissions: string[], requiredPermissions: string[]): boolean => {

@@ -7,7 +7,7 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 
@@ -19,6 +19,7 @@ import HasPermissionsClient from "@/components/HasPermissionsClient";
 import PermitDrawer from "@/components/permit/PermitDrawer";
 import PrintPermit from "@/components/permit/PrintPermit";
 import RenewPermit from "@/components/permit/RenewPermit";
+import PermitReportBar, { emptyFilters, PermitReportFilters } from "@/components/permit/PermitReportBar";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import ForestOutlinedIcon from "@mui/icons-material/ForestOutlined";
@@ -117,6 +118,8 @@ const EmptyState = () => (
 
 /* ── page ────────────────────────────────────────────────────────────── */
 const PermitsPage = () => {
+  const [filters, setFilters] = useState<PermitReportFilters>(emptyFilters);
+
   const { data, isLoading } = useQuery<PermitListsType>({
     queryKey: ["permit-lists"],
     queryFn: async () => {
@@ -125,6 +128,19 @@ const PermitsPage = () => {
     },
     retry: false,
   });
+
+  const filteredRows = useMemo(() => {
+    const all = data?.data ?? [];
+    return all.filter((p) => {
+      if (filters.status && p.status !== filters.status) return false;
+      if (filters.from || filters.to) {
+        const created = new Date(p.created_at);
+        if (filters.from && created < new Date(filters.from + "T00:00:00")) return false;
+        if (filters.to && created > new Date(filters.to + "T23:59:59")) return false;
+      }
+      return true;
+    });
+  }, [data, filters]);
 
   const columns = useMemo<MRT_ColumnDef<PermitDataType>[]>(
     () => [
@@ -230,7 +246,7 @@ const PermitsPage = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: data?.data ?? [],
+    data: filteredRows,
     enableFilters: true,
     enablePagination: true,
     enableBottomToolbar: true,
@@ -296,7 +312,7 @@ const PermitsPage = () => {
           }} />
         </div>
         <span className="ml-auto text-[11px] font-semibold text-slate-400">
-          {data?.data?.length ?? 0} record{data?.data?.length !== 1 ? "s" : ""}
+          {filteredRows.length} record{filteredRows.length !== 1 ? "s" : ""}
         </span>
       </div>
     ),
@@ -324,8 +340,13 @@ const PermitsPage = () => {
           </div>
         </div>
       </div>
-      {/* Table */}
+      {/* Report bar + Table */}
       <div className="min-h-0 flex-1 overflow-auto p-5">
+        <PermitReportBar
+          filters={filters}
+          onChange={setFilters}
+          filteredRows={filteredRows}
+        />
         <MaterialReactTable table={table} />
       </div>
     </div>

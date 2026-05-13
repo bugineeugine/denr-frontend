@@ -7,7 +7,7 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 
@@ -18,6 +18,10 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
+import ApprovalHistoryReportBar, {
+  emptyApprovalFilters,
+  ApprovalReportFilters,
+} from "@/components/permit/ApprovalHistoryReportBar";
 
 /* ── status config ───────────────────────────────────────────────────── */
 const STATUS_STYLE: Record<string, { color: string; bg: string; dot: string }> = {
@@ -56,6 +60,8 @@ const EmptyState = () => (
 
 /* ── page ────────────────────────────────────────────────────────────── */
 const HistoryApprovePage = () => {
+  const [filters, setFilters] = useState<ApprovalReportFilters>(emptyApprovalFilters);
+
   const { data, isLoading } = useQuery<PermitListsType>({
     queryKey: ["history-approved"],
     queryFn: async () => {
@@ -64,6 +70,17 @@ const HistoryApprovePage = () => {
     },
     retry: false,
   });
+
+  const filteredRows = useMemo(() => {
+    const all = data?.data ?? [];
+    if (!filters.from && !filters.to) return all;
+    return all.filter((p) => {
+      const created = new Date(p.created_at);
+      if (filters.from && created < new Date(filters.from + "T00:00:00")) return false;
+      if (filters.to && created > new Date(filters.to + "T23:59:59")) return false;
+      return true;
+    });
+  }, [data, filters]);
 
   const columns = useMemo<MRT_ColumnDef<PermitDataType>[]>(
     () => [
@@ -111,7 +128,7 @@ const HistoryApprovePage = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: data?.data ?? [],
+    data: filteredRows,
     enableFilters: true,
     enablePagination: true,
     enableBottomToolbar: true,
@@ -172,7 +189,7 @@ const HistoryApprovePage = () => {
           }} />
         </div>
         <span className="ml-auto text-[11px] font-semibold text-slate-400">
-          {data?.data?.length ?? 0} record{data?.data?.length !== 1 ? "s" : ""}
+          {filteredRows.length} record{filteredRows.length !== 1 ? "s" : ""}
         </span>
       </div>
     ),
@@ -202,8 +219,13 @@ const HistoryApprovePage = () => {
         </div>
       </div>
 
-      {/* Table */}
+      {/* Report bar + Table */}
       <div className="min-h-0 flex-1 overflow-auto p-5">
+        <ApprovalHistoryReportBar
+          filters={filters}
+          onChange={setFilters}
+          filteredRows={filteredRows}
+        />
         <MaterialReactTable table={table} />
       </div>
     </div>

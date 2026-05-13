@@ -19,6 +19,9 @@ import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
+import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
+import RadioButtonUncheckedRoundedIcon from "@mui/icons-material/RadioButtonUncheckedRounded";
 import { useRouter } from "next/navigation";
 
 import { PermitDataType } from "@/types/permit";
@@ -205,12 +208,29 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
   };
 
   const docs = [
-    { label: "Request Letter", path: permit.requestLetter },
-    { label: "Barangay Certificate", path: permit.certificateBarangay },
-    { label: "OR / CR", path: permit.orCr },
-    { label: "Driver's License", path: permit.driverLicense },
-    { label: "Other Documents", path: permit.otherDocuments },
+    { label: "Request Letter",      path: permit.requestLetter,      required: true },
+    { label: "Barangay Certificate", path: permit.certificateBarangay, required: true },
+    { label: "OR / CR",             path: permit.orCr,               required: true },
+    { label: "Driver's License",    path: permit.driverLicense,      required: true },
+    { label: "Other Documents",     path: permit.otherDocuments,     required: false },
   ];
+
+  const docsBaseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/documents`;
+  const requiredDocs = docs.filter((d) => d.required);
+  const completed = requiredDocs.filter((d) => !!d.path).length;
+  const totalRequired = requiredDocs.length;
+  const allComplete = completed === totalRequired;
+
+  const downloadDoc = (filename: string, label: string) => {
+    const a = document.createElement("a");
+    a.href = `${docsBaseUrl}/${filename}`;
+    a.download = `${permit.permit_no}_${label.replace(/\s+/g, "_")}`;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
 
   return (
     <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
@@ -445,6 +465,65 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
             </div>
           </SectionCard>
 
+          {/* Required Documents Checklist */}
+          <div
+            className="rounded-2xl overflow-hidden"
+            style={{ border: "1.5px solid #e5e7eb", background: "#fff", boxShadow: "0 2px 8px rgba(20,83,45,0.04)" }}
+          >
+            <div
+              className="flex items-center justify-between gap-2.5 px-5 py-3"
+              style={{ background: "#f8fafc", borderBottom: "1.5px solid #e5e7eb" }}
+            >
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
+                  style={{ background: "linear-gradient(135deg, #dcfce7, #f0fdf4)", border: "1px solid #bbf7d0" }}
+                >
+                  <CheckCircleOutlineRoundedIcon sx={{ fontSize: 14, color: "#166534" }} />
+                </div>
+                <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-500">
+                  Required Documents
+                </span>
+              </div>
+              <span
+                className="rounded-full px-2.5 py-0.5 text-[11px] font-bold"
+                style={
+                  allComplete
+                    ? { background: "#dcfce7", color: "#14532d" }
+                    : { background: "#fef3c7", color: "#92400e" }
+                }
+              >
+                {completed} / {totalRequired} complete
+              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-2 px-5 py-4 sm:grid-cols-2">
+              {docs.map((d, i) => {
+                const present = !!d.path;
+                return (
+                  <div key={i} className="flex items-center gap-2">
+                    {present ? (
+                      <CheckCircleOutlineRoundedIcon sx={{ fontSize: 16, color: "#16a34a" }} />
+                    ) : (
+                      <RadioButtonUncheckedRoundedIcon sx={{ fontSize: 16, color: "#cbd5e1" }} />
+                    )}
+                    <span
+                      className="text-[12.5px] font-semibold"
+                      style={{ color: present ? "#0f172a" : "#94a3b8" }}
+                    >
+                      {d.label}
+                    </span>
+                    {!present && d.required && (
+                      <span className="text-[10px] font-bold text-amber-700">missing</span>
+                    )}
+                    {!present && !d.required && (
+                      <span className="text-[10px] text-slate-400">optional</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Supporting Documents */}
           <div
             className="rounded-2xl overflow-hidden"
@@ -456,15 +535,47 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
               </div>
               <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-500">Supporting Documents</span>
             </div>
-            <div className="flex items-center gap-2 overflow-x-auto px-4 py-3" style={{ borderBottom: "1.5px solid #e5e7eb" }}>
-              {docs.map((d, i) => (
-                <DocTab key={i} label={d.label} active={docTab === i} onClick={() => setDocTab(i)} />
-              ))}
+            <div
+              className="flex items-center justify-between gap-2 px-4 py-3"
+              style={{ borderBottom: "1.5px solid #e5e7eb" }}
+            >
+              <div className="flex items-center gap-2 overflow-x-auto">
+                {docs.map((d, i) => (
+                  <DocTab key={i} label={d.label} active={docTab === i} onClick={() => setDocTab(i)} />
+                ))}
+              </div>
+              {docs[docTab].path && (
+                <button
+                  onClick={() => downloadDoc(docs[docTab].path!, docs[docTab].label)}
+                  className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-bold transition-colors"
+                  style={{
+                    background: "#f0fdf4",
+                    color: "#14532d",
+                    border: "1.5px solid #bbf7d0",
+                  }}
+                >
+                  <DownloadOutlinedIcon sx={{ fontSize: 14 }} />
+                  Download
+                </button>
+              )}
             </div>
-            <iframe
-              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/documents/${docs[docTab].path}#toolbar=0&navpanes=0&scrollbar=0`}
-              style={{ width: "100%", border: "none", height: "70vh", display: "block" }}
-            />
+            {docs[docTab].path ? (
+              <iframe
+                src={`${docsBaseUrl}/${docs[docTab].path}#toolbar=0&navpanes=0&scrollbar=0`}
+                style={{ width: "100%", border: "none", height: "70vh", display: "block" }}
+              />
+            ) : (
+              <div
+                className="flex flex-col items-center justify-center gap-2 py-20"
+                style={{ background: "#fafafa" }}
+              >
+                <FolderOpenOutlinedIcon sx={{ fontSize: 36, color: "#cbd5e1" }} />
+                <p className="text-[13px] font-bold text-slate-500">{docs[docTab].label} not uploaded</p>
+                <p className="text-[11px] text-slate-400">
+                  This document was not provided by the applicant.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* ── Violation Reporting ──────────────────────────────────── */}

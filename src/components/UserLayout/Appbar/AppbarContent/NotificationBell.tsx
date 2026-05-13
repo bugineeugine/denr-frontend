@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { customToast } from "@/utils/customToast";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Menu from "@mui/material/Menu";
@@ -92,9 +93,35 @@ const NotificationBell = () => {
       const res = await axiosInstance.get("/notifications");
       return res.data;
     },
-    refetchInterval: 60_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: false,
     retry: false,
   });
+
+  // Toast when a new unread notification arrives (only after the initial fetch)
+  const lastSeenIdRef = useRef<string | null>(null);
+  const initializedRef = useRef(false);
+  useEffect(() => {
+    const list = data?.data?.notifications ?? [];
+    const newest = list[0];
+    if (!newest) return;
+
+    if (!initializedRef.current) {
+      lastSeenIdRef.current = newest.id;
+      initializedRef.current = true;
+      return;
+    }
+
+    if (newest.id !== lastSeenIdRef.current && !newest.read_at) {
+      const variant =
+        newest.severity === "critical" ? "error"
+        : newest.severity === "warning" ? "warning"
+        : newest.severity === "success" ? "success"
+        : "info";
+      customToast(newest.title, variant);
+      lastSeenIdRef.current = newest.id;
+    }
+  }, [data]);
 
   const markRead = useMutation({
     mutationFn: async (id: string) => axiosInstance.put(`/notifications/${id}/read`),
