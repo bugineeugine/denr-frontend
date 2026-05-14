@@ -22,6 +22,11 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
 import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   IconButton,
   InputAdornment,
@@ -30,6 +35,7 @@ import {
   Tabs as MuiTabs,
   TextField,
 } from "@mui/material";
+import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined";
 import { alpha, styled } from "@mui/material/styles";
 
 import { AuthData } from "@/types/auth";
@@ -271,8 +277,126 @@ const LoginForm = () => {
   );
 };
 
+const VerifyCodeDialog = ({
+  open,
+  email,
+  onClose,
+  onVerified,
+}: {
+  open: boolean;
+  email: string;
+  onClose: () => void;
+  onVerified: () => void;
+}) => {
+  const [code, setCode] = useState("");
+
+  const verify = useMutation<{ message: string }, AxiosError<{ message: string }>, void>({
+    mutationFn: async () => {
+      const res = await axiosInstance.post(`/verify-email`, { email, code });
+      return res.data;
+    },
+    onSuccess: (res) => {
+      customToast(res.message, "success");
+      setCode("");
+      onVerified();
+    },
+    onError: (error) => {
+      customToast(error.response?.data.message || error.message, "error");
+    },
+  });
+
+  const resend = useMutation<{ message: string }, AxiosError<{ message: string }>, void>({
+    mutationFn: async () => {
+      const res = await axiosInstance.post(`/resend-verification`, { email });
+      return res.data;
+    },
+    onSuccess: (res) => customToast(res.message, "info"),
+    onError: (error) =>
+      customToast(error.response?.data.message || error.message, "error"),
+  });
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xs"
+      fullWidth
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: "16px",
+            border: "1.5px solid #e5e7eb",
+            boxShadow: "0 24px 64px rgba(15,23,42,0.18)",
+          },
+        },
+      }}
+    >
+      <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1.2, fontWeight: 700 }}>
+        <MarkEmailReadOutlinedIcon sx={{ color: "#15803d" }} />
+        Verify your email
+      </DialogTitle>
+      <DialogContent>
+        <p className="text-[13px] text-slate-600 mb-3">
+          We sent a 6-digit code to <strong className="text-slate-800">{email}</strong>.
+          Enter it below to activate your account.
+        </p>
+        <TextField
+          fullWidth
+          autoFocus
+          label="Verification code"
+          placeholder="000000"
+          value={code}
+          onChange={(e) => {
+            const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
+            setCode(digits);
+          }}
+          slotProps={{
+            htmlInput: {
+              inputMode: "numeric",
+              maxLength: 6,
+              style: {
+                textAlign: "center",
+                letterSpacing: "0.5em",
+                fontSize: "1.4rem",
+                fontWeight: 700,
+              },
+            },
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => resend.mutate()}
+          disabled={resend.isPending}
+          className="mt-3 text-[12px] font-semibold text-emerald-700 hover:underline disabled:text-slate-400"
+        >
+          {resend.isPending ? "Sending…" : "Resend code"}
+        </button>
+      </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button onClick={onClose} disabled={verify.isPending} sx={{ textTransform: "none", color: "#64748b" }}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          disabled={verify.isPending || code.length !== 6}
+          onClick={() => verify.mutate()}
+          sx={{
+            background: "linear-gradient(135deg, #14532d, #15803d)",
+            textTransform: "none",
+            fontWeight: 700,
+            "&:hover": { background: "linear-gradient(135deg, #15803d, #16a34a)" },
+          }}
+        >
+          {verify.isPending ? "Verifying…" : "Verify"}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [verifyEmail, setVerifyEmail] = useState<string | null>(null);
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -284,7 +408,7 @@ const RegisterForm = () => {
   });
 
   const { mutateAsync, isPending } = useMutation<
-    { message: string },
+    { message: string; email?: string; requires_verification?: boolean },
     AxiosError<{ message: string }>,
     RequestRsgisterType
   >({
@@ -292,8 +416,11 @@ const RegisterForm = () => {
       const response = await axiosInstance.post(`/register`, data);
       return response.data;
     },
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       customToast(response.message);
+      if (response.requires_verification) {
+        setVerifyEmail(response.email ?? variables.email);
+      }
     },
     onError: (error) => {
       customToast(error.response?.data.message || error.message, "error");
@@ -421,6 +548,13 @@ const RegisterForm = () => {
           {isPending ? "Creating account..." : "Create Account"}
         </span>
       </button>
+
+      <VerifyCodeDialog
+        open={!!verifyEmail}
+        email={verifyEmail ?? ""}
+        onClose={() => setVerifyEmail(null)}
+        onVerified={() => setVerifyEmail(null)}
+      />
     </form>
   );
 };

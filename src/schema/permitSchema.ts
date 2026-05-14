@@ -3,9 +3,12 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "application/pdf"];
 export const permitSchema = z.object({
   typeForestProduct: z.string().nonempty({ error: "Type of Forest Product is required" }),
-  estimatedVolumeQuantity: z.string().nonempty({ error: "Estimated volume/quantity" }),
-  typeConveyancePlateNumber: z.string().nonempty({ error: "Type of Conveyance / Plate Number is required" }),
-  consignee: z.string().nonempty({ error: "Consignee is required" }),
+  estimated_volume: z.string().nonempty({ error: "Estimated volume is required" }),
+  quantity_pcs: z.string().nonempty({ error: "Quantity is required" }),
+  type_conveyance: z.string().nonempty({ error: "Type of Conveyance is required" }),
+  plate_number: z.string().nonempty({ error: "Plate Number is required" }),
+  consignee_name: z.string().nonempty({ error: "Consignee Name is required" }),
+  destination: z.string().nonempty({ error: "Destination is required" }),
   species: z.string().nonempty({ error: "Species is required" }),
   dateOfTransport: z.string().nonempty({ error: "Date of Transport is required" }),
   landOwner: z.string().nonempty({ error: "Land Owner is required" }),

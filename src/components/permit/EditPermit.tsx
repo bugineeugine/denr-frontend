@@ -40,7 +40,16 @@ const DialogContentForm = (props: Props) => {
   const statusMeta = getStatus(status);
 
   const methods = useForm({
-    defaultValues: { status, ...rest },
+    defaultValues: {
+      status,
+      ...rest,
+      estimated_volume: rest.estimated_volume ?? "",
+      quantity_pcs: rest.quantity_pcs ?? "",
+      type_conveyance: rest.type_conveyance ?? "",
+      plate_number: rest.plate_number ?? "",
+      consignee_name: rest.consignee_name ?? "",
+      destination: rest.destination ?? "",
+    },
     resolver: zodResolver(updatePermitSchema),
     mode: "all",
   });

@@ -22,10 +22,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { SyntheticEvent, useState } from "react";
-import { Box, Card, CardHeader, CardMedia, FormHelperText, InputLabel, Typography } from "@mui/material";
+import { Box, Card, CardHeader, CardMedia, FormHelperText, InputAdornment, InputLabel, Typography } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import Button from "@mui/material/Button";
 
 import Comments from "./Comments";
 
@@ -301,9 +304,36 @@ const FileUploadContent = () => {
 const timberSpecies = ["Lumber (tabla)", "Plywood", "Veneer", "Particle Board", "Logs"];
 const nonTimberSpecies = ["Rattan", "Bamboo", "Almaciga Resin", "Anahaw Palms", "Nipa"];
 
-const PermitForm = ({ action }: { action?: string }) => {
+export const BASIC_INFO_FIELDS = [
+  "typeForestProduct",
+  "species",
+  "estimated_volume",
+  "quantity_pcs",
+  "type_conveyance",
+  "plate_number",
+  "consignee_name",
+  "destination",
+  "dateOfTransport",
+  "landOwner",
+  "contactNumber",
+] as const;
+
+const PermitForm = ({
+  action,
+  activeTab,
+  onTabChange,
+}: {
+  action?: string;
+  activeTab?: number;
+  onTabChange?: (tab: number) => void;
+}) => {
   const { control, getValues, watch } = useFormContext<PermitSchemaType & { status: string }>();
-  const [value, setVaueTabs] = useState(0);
+  const [internalTab, setInternalTab] = useState(0);
+  const value = activeTab ?? internalTab;
+  const setVaueTabs = (next: number) => {
+    if (onTabChange) onTabChange(next);
+    else setInternalTab(next);
+  };
   const typeForestProduct = watch("typeForestProduct");
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -414,20 +444,117 @@ const PermitForm = ({ action }: { action?: string }) => {
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel sx={{ fontSize: "0.78rem", fontWeight: 700, color: "#374151", mb: 0.5 }}>Estimated volume/quantity</FormLabel>
-              <TextFieldForm name="estimatedVolumeQuantity" />
+              <FormLabel sx={{ fontSize: "0.78rem", fontWeight: 700, color: "#374151", mb: 0.5 }}>Estimated Volume (cu.m)</FormLabel>
+              <Controller
+                control={control}
+                name="estimated_volume"
+                render={({ field: { value, onChange }, fieldState }) => (
+                  <TextField
+                    value={value ?? ""}
+                    onChange={onChange}
+                    placeholder="e.g. 1.5"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    slotProps={{ input: { endAdornment: <InputAdornment position="end">cu.m</InputAdornment> } }}
+                  />
+                )}
+              />
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel>Type of conveyance and plate number</FormLabel>
-              <TextFieldForm name="typeConveyancePlateNumber" />
+              <FormLabel sx={{ fontSize: "0.78rem", fontWeight: 700, color: "#374151", mb: 0.5 }}>Quantity (pcs)</FormLabel>
+              <Controller
+                control={control}
+                name="quantity_pcs"
+                render={({ field: { value, onChange }, fieldState }) => (
+                  <TextField
+                    value={value ?? ""}
+                    onChange={onChange}
+                    placeholder="e.g. 25"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    slotProps={{ input: { endAdornment: <InputAdornment position="end">pcs</InputAdornment> } }}
+                  />
+                )}
+              />
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth>
-              <FormLabel>Name and address of the consignee/destination</FormLabel>
-              <TextFieldForm name="consignee" />
+              <InputLabel id="type-conveyance-label">Type of Conveyance</InputLabel>
+              <Controller
+                name="type_conveyance"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <>
+                    <Select {...field} value={field.value ?? ""} labelId="type-conveyance-label" label="Type of Conveyance">
+                      <MenuItem value=""></MenuItem>
+                      <MenuItem value="Truck">Truck</MenuItem>
+                      <MenuItem value="Truck Van">Truck Van</MenuItem>
+                      <MenuItem value="Jeep">Jeep</MenuItem>
+                      <MenuItem value="Elf Van">Elf Van</MenuItem>
+                      <MenuItem value="Van">Van</MenuItem>
+                      <MenuItem value="Tricycle">Tricycle</MenuItem>
+                    </Select>
+                    {fieldState.error && <FormHelperText error>{fieldState.error.message}</FormHelperText>}
+                  </>
+                )}
+              />
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FormControl fullWidth>
+              <FormLabel>Plate Number</FormLabel>
+              <Controller
+                control={control}
+                name="plate_number"
+                render={({ field: { value, onChange }, fieldState }) => (
+                  <TextField
+                    value={value ?? ""}
+                    onChange={(e) => onChange(e.target.value.toUpperCase())}
+                    placeholder="e.g. ABC-1234"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FormControl fullWidth>
+              <FormLabel>Consignee Name</FormLabel>
+              <Controller
+                control={control}
+                name="consignee_name"
+                render={({ field: { value, onChange }, fieldState }) => (
+                  <TextField
+                    value={value ?? ""}
+                    onChange={onChange}
+                    placeholder="Full name of consignee"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FormControl fullWidth>
+              <FormLabel>Destination</FormLabel>
+              <Controller
+                control={control}
+                name="destination"
+                render={({ field: { value, onChange }, fieldState }) => (
+                  <TextField
+                    value={value ?? ""}
+                    onChange={onChange}
+                    placeholder="Address / Destination"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
             </FormControl>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -558,6 +685,27 @@ const PermitForm = ({ action }: { action?: string }) => {
 
       <CustomTabPanel value={value} index={1}>
         {action === "edit" ? <DisplayFileContent /> : <FileUploadContent />}
+        {false && (
+          <Box sx={{ display: "flex", justifyContent: "flex-start", px: 3, pb: 2 }}>
+            <Button
+              onClick={() => setVaueTabs(0)}
+              startIcon={<ArrowBackRoundedIcon sx={{ fontSize: 16 }} />}
+              sx={{
+                color: "#64748b",
+                borderRadius: "10px",
+                textTransform: "none",
+                fontSize: "0.82rem",
+                fontWeight: 700,
+                px: 2.5,
+                py: 1,
+                border: "1.5px solid #e5e7eb",
+                "&:hover": { borderColor: "#cbd5e1", bgcolor: "#f8fafc" },
+              }}
+            >
+              Back to Basic Information
+            </Button>
+          </Box>
+        )}
       </CustomTabPanel>
 
       {action === "edit" && (

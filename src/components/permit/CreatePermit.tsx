@@ -19,26 +19,33 @@ import axiosInstance from "@/utils/axiosInstance";
 import { customToast } from "@/utils/customToast";
 import { AxiosError } from "axios";
 
-import PermitForm from "./PermitForm";
+import PermitForm, { BASIC_INFO_FIELDS } from "./PermitForm";
 import { createPermitSchema } from "@/schema/permitSchema";
 import { RequestCreateType, ResponseCreatePermitType } from "@/types/permit";
 import useAuth from "@/store/useAuth";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import ForestOutlinedIcon from "@mui/icons-material/ForestOutlined";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import { useState } from "react";
 
 const DialogContentForm = (props: UseDisclosureType) => {
   const { onClose } = props;
   const userData = useAuth((state) => state.userData);
+  const [activeTab, setActiveTab] = useState(0);
 
   const queryClient = useQueryClient();
   const methods = useForm({
     defaultValues: {
       species: "",
       typeForestProduct: "",
-      estimatedVolumeQuantity: "",
-      typeConveyancePlateNumber: "",
-      consignee: "",
+      estimated_volume: "",
+      quantity_pcs: "",
+      type_conveyance: "",
+      plate_number: "",
+      consignee_name: "",
+      destination: "",
       dateOfTransport: "",
       landOwner: "",
       contactNumber: "",
@@ -79,6 +86,12 @@ const DialogContentForm = (props: UseDisclosureType) => {
   const onSubmit = async (data: RequestCreateType) => {
     await mutateAsync(data);
     onClose();
+  };
+
+  const handleNext = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const valid = await methods.trigger(BASIC_INFO_FIELDS as unknown as any);
+    if (valid) setActiveTab(1);
   };
 
   return (
@@ -161,7 +174,7 @@ const DialogContentForm = (props: UseDisclosureType) => {
             background: "#f8fafc",
           }}
         >
-          <PermitForm />
+          <PermitForm activeTab={activeTab} onTabChange={setActiveTab} />
         </DialogContent>
 
         {/* ── Footer ────────────────────────────────────────────────── */}
@@ -176,45 +189,89 @@ const DialogContentForm = (props: UseDisclosureType) => {
           }}
         >
           <p className="text-[11px] text-slate-400">
-            Fields marked <span className="font-bold text-red-400">*</span> are required
+            Step <span className="font-bold text-emerald-700">{activeTab + 1}</span> of 2 —{" "}
+            {activeTab === 0 ? "Basic Information" : "Upload Documents"}
           </p>
           <div className="flex items-center gap-2">
-            <Button
-              onClick={onClose}
-              disabled={isPending}
-              sx={{
-                borderColor: "#e5e7eb",
-                color: "#64748b",
-                borderRadius: "10px",
-                textTransform: "none",
-                fontSize: "0.8rem",
-                border: "1.5px solid #e5e7eb",
-                "&:hover": { borderColor: "#cbd5e1", bgcolor: "#f8fafc" },
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              loading={isPending}
-              type="submit"
-              startIcon={<SaveOutlinedIcon sx={{ fontSize: 16 }} />}
-              sx={{
-                background: "linear-gradient(135deg, #14532d, #166534)",
-                color: "#fff",
-                borderRadius: "10px",
-                textTransform: "none",
-                fontSize: "0.8rem",
-                fontWeight: 700,
-                px: 2.5,
-                boxShadow: "0 4px 12px rgba(20,83,45,0.35)",
-                "&:hover": {
-                  background: "linear-gradient(135deg, #166534, #15803d)",
-                  boxShadow: "0 6px 16px rgba(20,83,45,0.45)",
-                },
-              }}
-            >
-              Submit Application
-            </Button>
+            {activeTab === 0 ? (
+              <>
+                <Button
+                  onClick={onClose}
+                  disabled={isPending}
+                  sx={{
+                    color: "#64748b",
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontSize: "0.8rem",
+                    border: "1.5px solid #e5e7eb",
+                    "&:hover": { borderColor: "#cbd5e1", bgcolor: "#f8fafc" },
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleNext}
+                  endIcon={<ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />}
+                  sx={{
+                    background: "linear-gradient(135deg, #14532d, #166534)",
+                    color: "#fff",
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontSize: "0.82rem",
+                    fontWeight: 700,
+                    px: 2.5,
+                    boxShadow: "0 4px 12px rgba(20,83,45,0.35)",
+                    "&:hover": {
+                      background: "linear-gradient(135deg, #166534, #15803d)",
+                      boxShadow: "0 6px 16px rgba(20,83,45,0.45)",
+                    },
+                  }}
+                >
+                  Next: Upload Documents
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type="button"
+                  onClick={() => setActiveTab(0)}
+                  disabled={isPending}
+                  startIcon={<ArrowBackRoundedIcon sx={{ fontSize: 16 }} />}
+                  sx={{
+                    color: "#64748b",
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontSize: "0.8rem",
+                    border: "1.5px solid #e5e7eb",
+                    "&:hover": { borderColor: "#cbd5e1", bgcolor: "#f8fafc" },
+                  }}
+                >
+                  Back
+                </Button>
+                <Button
+                  loading={isPending}
+                  type="submit"
+                  startIcon={<SaveOutlinedIcon sx={{ fontSize: 16 }} />}
+                  sx={{
+                    background: "linear-gradient(135deg, #14532d, #166534)",
+                    color: "#fff",
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    px: 2.5,
+                    boxShadow: "0 4px 12px rgba(20,83,45,0.35)",
+                    "&:hover": {
+                      background: "linear-gradient(135deg, #166534, #15803d)",
+                      boxShadow: "0 6px 16px rgba(20,83,45,0.45)",
+                    },
+                  }}
+                >
+                  Submit Application
+                </Button>
+              </>
+            )}
           </div>
         </DialogActions>
       </form>

@@ -422,9 +422,31 @@ export default function ViewPermitById({ permit }: { permit: PermitDataType }) {
             <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
               <DetailItem label="Type of Forest Product" value={permit.typeForestProduct} />
               <DetailItem label="Species" value={permit.species} />
-              <DetailItem label="Estimated Volume / Quantity" value={permit.estimatedVolumeQuantity} />
-              <DetailItem label="Conveyance & Plate Number" value={permit.typeConveyancePlateNumber} icon={LocalShippingOutlinedIcon} />
-              <DetailItem label="Consignee / Destination" value={permit.consignee} />
+              <DetailItem
+                label="Estimated Volume"
+                value={permit.estimated_volume ? `${permit.estimated_volume} cu.m` : permit.estimatedVolumeQuantity}
+              />
+              <DetailItem
+                label="Quantity"
+                value={permit.quantity_pcs ? `${permit.quantity_pcs} pcs` : "—"}
+              />
+              <DetailItem
+                label="Type of Conveyance"
+                value={permit.type_conveyance ?? permit.typeConveyancePlateNumber}
+                icon={LocalShippingOutlinedIcon}
+              />
+              <DetailItem
+                label="Plate Number"
+                value={permit.plate_number ?? "—"}
+              />
+              <DetailItem
+                label="Consignee Name"
+                value={permit.consignee_name ?? permit.consignee}
+              />
+              <DetailItem
+                label="Destination"
+                value={permit.destination ?? "—"}
+              />
               <DetailItem label="Date of Transport" value={permit.dateOfTransport} icon={CalendarTodayOutlinedIcon} />
             </div>
           </SectionCard>

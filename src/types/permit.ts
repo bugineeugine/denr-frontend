@@ -19,6 +19,12 @@ export type PermitDataType = {
   estimatedVolumeQuantity: string;
   typeConveyancePlateNumber: string;
   consignee: string;
+  estimated_volume?: string | null;
+  quantity_pcs?: string | null;
+  type_conveyance?: string | null;
+  plate_number?: string | null;
+  consignee_name?: string | null;
+  destination?: string | null;
   dateOfTransport: string;
   species: string;
   expiry_date: string;
