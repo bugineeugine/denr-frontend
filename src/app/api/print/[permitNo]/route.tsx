@@ -266,7 +266,7 @@ const PermitPdf = ({ data }: PermitProps) => {
       <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.headerContainer}>
           <View style={styles.headerLeft}>
-            <Image style={styles.logo} src="http://localhost:3000/denr.png" />
+            <Image style={styles.logo} src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/denr.png`} />
 
             <View style={styles.headerTextContainer}>
               <Text style={styles.headerBold}>Department of Environment and Natural Resources</Text>
